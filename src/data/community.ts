@@ -6,6 +6,7 @@ export const CURRENT_USER: Profile = {
   display_name: "Alexis Duval",
   initials: "AD",
   verified: true,
+  is_creator: true,
 };
 
 /** Monnaie de la gamification, affichée dans la barre du haut. */

@@ -22,6 +22,10 @@ export const COLORS = {
   text: "#F4F1F4",
   /** Texte discret. */
   muted: "#9A94A2",
+  /** Hausse d'une statistique. */
+  up: "#4FBF87",
+  /** Baisse d'une statistique. */
+  down: "#E5715F",
 } as const;
 
 export const GRADIENTS = {

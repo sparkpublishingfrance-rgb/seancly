@@ -55,6 +55,17 @@ export function TopBar() {
           <span className="sr-only">pièces</span>
         </span>
 
+        {/* Espace privé, réservé aux créateurs. */}
+        {CURRENT_USER.is_creator && (
+          <Link
+            className="topbar__studio"
+            to="/studio"
+            aria-current={pathname === "/studio" ? "page" : undefined}
+          >
+            Studio
+          </Link>
+        )}
+
         <button
           type="button"
           className="topbar__avatar"

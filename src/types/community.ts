@@ -12,6 +12,8 @@ export interface Profile {
   display_name: string;
   initials: string;
   verified?: boolean;
+  /** Ouvre l'accès au studio. Viendra du rôle porté par la session. */
+  is_creator?: boolean;
 }
 
 export interface Guild {

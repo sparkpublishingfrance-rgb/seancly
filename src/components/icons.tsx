@@ -151,6 +151,126 @@ export function IconAlert({ size = 15 }: IconProps) {
   );
 }
 
+/** Flèche verticale. `up` inverse le sens, pour le réordonnancement. */
+export function IconArrowVertical({ size = 14, up = false }: IconProps & { up?: boolean }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={up ? { transform: "rotate(180deg)" } : undefined}
+    >
+      <path d="M12 5v14m0 0 5-5m-5 5-5-5" />
+    </svg>
+  );
+}
+
+export function IconTrash({ size = 14 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 7h16M10 7V5h4v2M6 7l1 12h10l1-12M10 11v5M14 11v5" />
+    </svg>
+  );
+}
+
+export function IconCheck({ size = 14 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m5 12.5 4.5 4.5L19 7" />
+    </svg>
+  );
+}
+
+export function IconClose({ size = 14 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
+export function IconCopy({ size = 14 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="9" y="9" width="11" height="11" rx="2.5" />
+      <path d="M15 5.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 5.5 15" />
+    </svg>
+  );
+}
+
+export function IconExternal({ size = 14 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M14 4h6v6M20 4l-9 9" />
+      <path d="M19 14.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3.5" />
+    </svg>
+  );
+}
+
+export function IconVerified({ size = 15 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="m12 2.6 2.5 1.9 3.1-.2.9 3 2.5 1.9-1.2 2.9 1.2 2.9-2.5 1.9-.9 3-3.1-.2L12 21.4l-2.5-1.9-3.1.2-.9-3-2.5-1.9L4.2 12 3 9.1l2.5-1.9.9-3 3.1.2L12 2.6Z" />
+      <path d="m8.6 12.2 2.3 2.3 4.5-4.7" fill="none" stroke="#0B0B0F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function IconCoin({ size = 14 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">

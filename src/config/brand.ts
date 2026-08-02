@@ -16,6 +16,8 @@ export const BRAND = {
     end: "quence",
   },
   tagline: "Le cinéma, mais avec du monde autour.",
+  /** Domaine des pages publiques de créateur. Provisoire, comme le nom. */
+  public_domain: "sequence.app",
   /** Mentions à afficher tant que la marque et les sources ne sont pas arrêtées. */
   notices: {
     inpi: "Nom provisoire, à valider INPI.",
