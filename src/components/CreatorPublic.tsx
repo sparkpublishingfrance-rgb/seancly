@@ -14,7 +14,7 @@ import { titleById, yearOf } from "../data/titles";
 import { useAuth } from "../context/auth-context";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useOpenGraph } from "../hooks/useOpenGraph";
-import { formatNumber } from "../utils/format";
+import { formatDecimal, formatNumber } from "../utils/format";
 import { CreatorShowcase } from "./CreatorShowcase";
 import { EmptyState } from "./EmptyState";
 import { Notice, Spinner } from "./StateMessage";
@@ -302,7 +302,7 @@ function RecentRatings({ ratings, isOwner }: RecentRatingsProps) {
               </Link>
               <span className="activity__rating">
                 <IconStar size={12} />
-                {entry.rating.toFixed(1)}
+                {formatDecimal(entry.rating)}
                 <span className="sr-only">sur 5</span>
               </span>
             </li>

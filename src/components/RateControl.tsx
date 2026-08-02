@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { messageOf } from "../api/client";
 import { RATING_MAX, deleteRating, getMyRating, upsertRating } from "../api/ratings";
 import { useAuth } from "../context/auth-context";
+import { formatDecimal } from "../utils/format";
 import { Notice } from "./StateMessage";
 import { IconPen, IconStar } from "./icons";
 
@@ -92,7 +93,7 @@ export function RateControl({ titleRef, titleName }: RateControlProps) {
         onClick={() => setOpen((value) => !value)}
       >
         <IconPen />
-        {rating === null ? "Noter" : `Ma note : ${rating.toFixed(1)} / ${RATING_MAX}`}
+        {rating === null ? "Noter" : `Ma note : ${formatDecimal(rating)} / ${RATING_MAX}`}
       </button>
 
       {open && (
@@ -119,14 +120,14 @@ export function RateControl({ titleRef, titleName }: RateControlProps) {
                     className="rate__half rate__half--left"
                     onClick={() => void pick(star - 0.5)}
                     disabled={busy}
-                    aria-label={`${star - 0.5} sur ${RATING_MAX}`}
+                    aria-label={`${formatDecimal(star - 0.5)} sur ${RATING_MAX}`}
                   />
                   <button
                     type="button"
                     className="rate__half rate__half--right"
                     onClick={() => void pick(star)}
                     disabled={busy}
-                    aria-label={`${star} sur ${RATING_MAX}`}
+                    aria-label={`${formatDecimal(star)} sur ${RATING_MAX}`}
                   />
                 </span>
               );

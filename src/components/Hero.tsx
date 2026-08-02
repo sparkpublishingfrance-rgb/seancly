@@ -1,5 +1,6 @@
 import type { TmdbTitle } from "../types/tmdb";
 import { yearOf } from "../data/titles";
+import { formatDecimal } from "../utils/format";
 import { IconPlay, IconPlus, IconStar } from "./icons";
 
 /** Sépare le dernier mot du titre, rendu en framboise. */
@@ -45,7 +46,7 @@ export function Hero({ title }: HeroProps) {
 
           <div className="hero__meta">
             <span className="hero__rating">
-              <IconStar size={12} /> {title.vote_average.toFixed(1)}
+              <IconStar size={12} /> {formatDecimal(title.vote_average)}
             </span>
             <span className="hero__meta-sep" aria-hidden="true" />
             <span>{yearOf(title)}</span>

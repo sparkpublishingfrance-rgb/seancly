@@ -3,6 +3,7 @@ import type { TmdbTitle } from "../types/tmdb";
 import { yearOf } from "../data/titles";
 import { COLORS, posterGradient } from "../config/theme";
 import { TMDB_IMAGE_BASE } from "../config/images";
+import { formatDecimal } from "../utils/format";
 import { IconPlay, IconPlus, IconStar } from "./icons";
 
 type PosterCardProps = {
@@ -44,7 +45,7 @@ export function PosterCard({ title }: PosterCardProps) {
 
         <span className="poster__rating">
           <IconStar size={11} />
-          {title.vote_average.toFixed(1)}
+          {formatDecimal(title.vote_average)}
         </span>
 
         <div className="poster__overlay">

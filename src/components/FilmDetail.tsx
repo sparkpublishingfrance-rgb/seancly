@@ -5,6 +5,7 @@ import { similarTo, titleById, yearOf } from "../data/titles";
 import { COLORS, backdropGradient } from "../config/theme";
 import { TMDB_IMAGE_BASE } from "../config/images";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { formatDecimal } from "../utils/format";
 import { EmptyState } from "./EmptyState";
 import {
   ContentWarnings,
@@ -111,7 +112,7 @@ function FilmHero({ title }: FilmHeroProps) {
 
         <div className="film-hero__meta">
           <span className="film-hero__rating">
-            <IconStar size={13} /> {title.vote_average.toFixed(1)}
+            <IconStar size={13} /> {formatDecimal(title.vote_average)}
           </span>
           <span>{yearOf(title)}</span>
           <span>{title.media_type === "tv" ? "Série" : "Film"}</span>

@@ -8,7 +8,7 @@ import type {
 } from "../types/tmdb";
 import { avatarGradient } from "../config/theme";
 import { TMDB_IMAGE_BASE } from "../config/images";
-import { initialsOf } from "../utils/format";
+import { formatDecimal, initialsOf } from "../utils/format";
 import { IconAlert, IconChevronDown, IconStar } from "./icons";
 
 /* ------------------------------------------------------------ note sociale */
@@ -28,7 +28,7 @@ export function SocialBar({ average, friends }: SocialBarProps) {
       <div className="social">
         <p className="social__score">
           <IconStar size={17} />
-          <span className="social__score-value">{average.toFixed(1)}</span>
+          <span className="social__score-value">{formatDecimal(average)}</span>
           <span className="social__score-scale">/ 10</span>
           <span className="social__score-label">note moyenne</span>
         </p>
@@ -45,9 +45,9 @@ export function SocialBar({ average, friends }: SocialBarProps) {
                   >
                     {friend.initials}
                   </span>
-                  <span className="friend__rating">{friend.rating.toFixed(1)}</span>
+                  <span className="friend__rating">{formatDecimal(friend.rating)}</span>
                   <span className="sr-only">
-                    {friend.handle} a mis {friend.rating.toFixed(1)} sur 10
+                    {friend.handle} a mis {formatDecimal(friend.rating)} sur 10
                   </span>
                 </li>
               ))}
