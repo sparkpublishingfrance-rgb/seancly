@@ -36,10 +36,19 @@ const FALLBACK: Decision = {
   reason: "Classement automatique indisponible, relecture humaine demandée.",
 };
 
+/**
+ * En-têtes du contrôle préalable.
+ *
+ * `x-client-info` et `x-supabase-api-version` sont envoyés par supabase-js sans
+ * qu'on les demande : les omettre fait échouer la requête dans le navigateur,
+ * avant même d'atteindre la fonction, alors qu'un appel direct passe très bien.
+ */
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, content-type, apikey",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, x-supabase-api-version, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
 };
 
 function json(body: unknown, status = 200): Response {
