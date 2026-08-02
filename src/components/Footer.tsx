@@ -9,6 +9,7 @@ const LEGAL_LINKS = [
   { label: "Mentions légales", to: "/mentions-legales" },
   { label: "Conditions générales", to: "/cgu" },
   { label: "Politique de confidentialité", to: "/confidentialite" },
+  { label: "Politique de droit d'auteur", to: "/droit-auteur" },
   { label: "Gestion des cookies", to: "/cookies" },
 ];
 
@@ -94,6 +95,24 @@ export function Footer() {
           </ul>
         </nav>
 
+        <nav className="foot__col" aria-labelledby="foot-communaute">
+          <h2 className="foot__title" id="foot-communaute">
+            Communauté
+          </h2>
+          <ul className="foot__list">
+            <li>
+              <Link className="foot__link" to="/regles">
+                Règles de la communauté
+              </Link>
+            </li>
+            <li>
+              <a className="foot__link" href={`mailto:${BRAND.contact_email}`}>
+                Nous écrire
+              </a>
+            </li>
+          </ul>
+        </nav>
+
         <nav className="foot__col" aria-labelledby="foot-legal">
           <h2 className="foot__title" id="foot-legal">
             Légal
@@ -124,7 +143,7 @@ export function Footer() {
         </ul>
 
         <p className="foot__copy">
-          © {YEAR} {BRAND.name}, édité par Spark Publishing.
+          © {YEAR} {BRAND.name}, édité par {BRAND.publisher}.
         </p>
       </div>
     </footer>
