@@ -298,23 +298,36 @@ export const TITLES: TmdbTitle[] = [
 /** Titre mis en avant dans le hero. */
 export const FEATURED: TmdbTitle = TITLES[0];
 
-/** Les trois rangées de l'accueil. */
-export const RAILS: Rail[] = [
+/**
+ * Rangées de l'accueil, volontairement éditoriales.
+ * Rien de personnel ici : l'accueil se parcourt sans compte, et tout ce qui
+ * appartient au membre vit dans « Mon espace ».
+ */
+export const HOME_RAILS: Rail[] = [
   {
-    title: "Repris par les créateurs que tu suis",
-    by: "via @cinéphage, @salleobscure",
-    ids: [107, 101, 110, 104, 109, 112, 102],
+    title: "Tendances cette semaine",
+    by: "Ce que la communauté regarde le plus",
+    ids: [101, 111, 103, 107, 108, 112, 102],
   },
   {
-    title: "Reprendre ta série",
-    ids: [103, 108, 111, 105],
+    title: "Nouveautés",
+    ids: [112, 108, 101, 105, 107],
   },
   {
-    title: "Trouvé pour toi",
-    by: "Matchbook · d'après tes goûts",
-    ids: [112, 106, 105, 111, 103, 108],
+    title: "Policiers et thrillers",
+    ids: [102, 104, 110, 106, 103, 101],
   },
 ];
+
+/**
+ * Reprise de visionnage. Personnelle, donc réservée à « Mon espace » : c'est la
+ * seule rangée qui montre l'avancement.
+ */
+export const CONTINUE_RAIL: Rail = {
+  title: "Reprendre ta série",
+  ids: TITLES.filter((title) => title.app?.progress !== undefined).map((title) => title.id),
+  show_progress: true,
+};
 
 /** Retrouve un titre par identifiant. Renvoie `undefined` si l'identifiant est inconnu. */
 export function titleById(id: number): TmdbTitle | undefined {

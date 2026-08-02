@@ -3,16 +3,33 @@ import { Link, useLocation } from "react-router-dom";
 import { BRAND, NAV_ITEMS } from "../config/brand";
 import { COINS } from "../data/community";
 import { useAuth } from "../context/auth-context";
-import { IconCoin, IconSearch } from "./icons";
+import { IconClose, IconCoin, IconMenu, IconSearch } from "./icons";
 
 export function TopBar() {
   const { pathname } = useLocation();
   const { status, profile } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const signedIn = status === "signed-in";
+
+  // Un changement de page referme le menu mobile.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header className="topbar">
       <div className="shell topbar__inner">
+        <button
+          type="button"
+          className="topbar__burger"
+          aria-expanded={menuOpen}
+          aria-controls="nav-mobile"
+          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <IconClose size={17} /> : <IconMenu size={17} />}
+        </button>
+
         <Link className="topbar__logo" to="/" aria-label={`${BRAND.name}, accueil`}>
           {BRAND.logo.start}
           <span className="topbar__logo-accent">{BRAND.logo.accent}</span>
@@ -20,20 +37,7 @@ export function TopBar() {
         </Link>
 
         <nav className="topbar__nav" aria-label="Navigation principale">
-          {/* Seul « Accueil » a une route pour l'instant. Les autres attendent
-              leurs écrans. */}
-          <Link
-            className="topbar__nav-link"
-            to="/"
-            aria-current={pathname === "/" ? "page" : undefined}
-          >
-            {NAV_ITEMS[0]}
-          </Link>
-          {NAV_ITEMS.slice(1).map((item) => (
-            <a key={item} className="topbar__nav-link" href="#">
-              {item}
-            </a>
-          ))}
+          <NavLinks pathname={pathname} />
         </nav>
 
         <div className="topbar__spacer" />
@@ -61,17 +65,6 @@ export function TopBar() {
           </span>
         )}
 
-        {/* Espace privé, réservé aux comptes créateurs. */}
-        {signedIn && profile?.is_creator && (
-          <Link
-            className="topbar__studio"
-            to="/studio"
-            aria-current={pathname === "/studio" ? "page" : undefined}
-          >
-            Studio
-          </Link>
-        )}
-
         {signedIn && profile ? (
           <AccountMenu initials={profile.initials} name={profile.display_name} />
         ) : (
@@ -80,7 +73,38 @@ export function TopBar() {
           </Link>
         )}
       </div>
+
+      {/* Sous 720px, la navigation principale se replie ici. */}
+      {menuOpen && (
+        <nav className="topbar__mobile" id="nav-mobile" aria-label="Navigation principale">
+          <NavLinks pathname={pathname} />
+        </nav>
+      )}
     </header>
+  );
+}
+
+/** Entrées de découverte. Celles sans route restent inertes en attendant l'écran. */
+function NavLinks({ pathname }: { pathname: string }) {
+  return (
+    <>
+      {NAV_ITEMS.map((item) =>
+        item.to ? (
+          <Link
+            key={item.label}
+            className="topbar__nav-link"
+            to={item.to}
+            aria-current={pathname === item.to ? "page" : undefined}
+          >
+            {item.label}
+          </Link>
+        ) : (
+          <span key={item.label} className="topbar__nav-link topbar__nav-link--soon">
+            {item.label}
+          </span>
+        ),
+      )}
+    </>
   );
 }
 
@@ -89,9 +113,9 @@ type AccountMenuProps = {
   name: string;
 };
 
-/** Menu de l'avatar : accès au studio et déconnexion. */
+/** Menu de l'avatar : c'est le seul chemin vers l'espace personnel. */
 function AccountMenu({ initials, name }: AccountMenuProps) {
-  const { profile, signOut } = useAuth();
+  const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
 
@@ -131,13 +155,16 @@ function AccountMenu({ initials, name }: AccountMenuProps) {
           <li role="none" className="account__who">
             {name}
           </li>
-          {profile?.is_creator && (
-            <li role="none">
-              <Link className="account__item" role="menuitem" to="/studio">
-                Mon studio
-              </Link>
-            </li>
-          )}
+          <li role="none">
+            <Link className="account__item" role="menuitem" to="/mon-espace">
+              Mon espace
+            </Link>
+          </li>
+          <li role="none">
+            <Link className="account__item" role="menuitem" to="/mon-espace">
+              Mes listes
+            </Link>
+          </li>
           <li role="none">
             <button
               type="button"

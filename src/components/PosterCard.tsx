@@ -3,16 +3,21 @@ import type { TmdbTitle } from "../types/tmdb";
 import { yearOf } from "../data/titles";
 import { COLORS, posterGradient } from "../config/theme";
 import { TMDB_IMAGE_BASE } from "../config/images";
-import { formatDecimal } from "../utils/format";
+import { formatScore } from "../utils/format";
 import { IconPlay, IconPlus, IconStar } from "./icons";
 
 type PosterCardProps = {
   title: TmdbTitle;
+  /**
+   * Montre la barre d'avancement. Faux par défaut : l'avancement est une donnée
+   * de compte, elle n'a rien à faire sur une page de découverte.
+   */
+  showProgress?: boolean;
 };
 
-export function PosterCard({ title }: PosterCardProps) {
+export function PosterCard({ title, showProgress = false }: PosterCardProps) {
   const spine = title.app?.spine_color ?? COLORS.surface2;
-  const progress = title.app?.progress;
+  const progress = showProgress ? title.app?.progress : undefined;
   const year = yearOf(title);
 
   return (
@@ -45,7 +50,7 @@ export function PosterCard({ title }: PosterCardProps) {
 
         <span className="poster__rating">
           <IconStar size={11} />
-          {formatDecimal(title.vote_average)}
+          {formatScore(title.vote_average)}
         </span>
 
         <div className="poster__overlay">

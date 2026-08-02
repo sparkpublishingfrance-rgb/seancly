@@ -1,4 +1,4 @@
-import type { Guild, HoroscopeDay, Quest } from "../types/community";
+import type { Guild, HoroscopeDay, Progression, Quest } from "../types/community";
 
 /**
  * Ce qui reste mocké côté communauté.
@@ -8,6 +8,15 @@ import type { Guild, HoroscopeDay, Quest } from "../types/community";
 
 /** Monnaie de la gamification, affichée dans la barre du haut. */
 export const COINS = 240;
+
+/** Progression du membre. Attend sa table, comme le reste de la gamification. */
+export const PROGRESSION: Progression = {
+  xp: 2340,
+  level: 7,
+  level_label: "Habitué du dernier rang",
+  next_level_xp: 3000,
+  titles_watched: 84,
+};
 
 export const HOROSCOPE_TODAY: HoroscopeDay = {
   sign_emoji: "♏",

@@ -6,17 +6,25 @@ import { BRAND } from "../config/brand";
 import { useAuth } from "../context/auth-context";
 import { formatMonthYear } from "../utils/format";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { BecomeCreatorCard, SpaceForMe, SpaceQuests } from "./SpacePanels";
 import { Spinner } from "./StateMessage";
 import { StudioLinks } from "./StudioLinks";
 import { StudioLists, StudioOffers } from "./StudioLists";
 import { StudioOverview } from "./StudioOverview";
 import { IconCopy, IconExternal, IconVerified } from "./icons";
 
+/**
+ * Onglets de « Mon espace ».
+ * Les trois premiers appartiennent à tout membre. Les suivants ne s'affichent
+ * qu'à un compte créateur : pas d'onglet vide, pas d'onglet verrouillé.
+ */
 const TABS = [
-  { id: "overview", label: "Vue d'ensemble" },
-  { id: "links", label: "Ma page publique" },
-  { id: "lists", label: "Mes listes" },
-  { id: "offers", label: "Partenariats" },
+  { id: "forme", label: "Pour moi", creatorOnly: false },
+  { id: "quests", label: "Quêtes", creatorOnly: false },
+  { id: "lists", label: "Mes listes", creatorOnly: false },
+  { id: "stats", label: "Statistiques", creatorOnly: true },
+  { id: "links", label: "Ma page publique", creatorOnly: true },
+  { id: "offers", label: "Partenariats", creatorOnly: true },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -27,17 +35,22 @@ const PLAN_LABELS: Record<CreatorPlan, string> = {
   cine_plus: "Ciné+",
 };
 
-export function CreatorStudio() {
-  useDocumentTitle("Studio");
+/**
+ * Espace personnel du membre. Tout ce qui lui appartient vit ici : horoscope,
+ * quêtes, listes, et pour un créateur ses statistiques, sa page publique et ses
+ * partenariats.
+ */
+export function MySpace() {
+  useDocumentTitle("Mon espace");
 
   const { status, profile } = useAuth();
 
   if (status === "unconfigured") {
     return (
-      <Gate title="Studio hors ligne">
-        La base n'est pas encore reliée à cette installation, donc ton studio n'a rien
-        à afficher. Renseigne les variables d'environnement Supabase, puis relance le
-        serveur.
+      <Gate title="Espace hors ligne">
+        La base n'est pas encore reliée à cette installation, donc ton espace n'a
+        rien à afficher. Renseigne les variables d'environnement Supabase, puis
+        relance le serveur.
       </Gate>
     );
   }
@@ -45,8 +58,8 @@ export function CreatorStudio() {
   if (status === "signed-out") {
     return (
       <Gate title="Connecte-toi" action={{ to: "/connexion", label: "Se connecter" }}>
-        Le studio est ton espace privé : tes statistiques, ta page publique et tes
-        partenariats. Il te faut un compte pour l'ouvrir.
+        Mon espace réunit ton horoscope du jour, tes quêtes et tes listes. Il te
+        faut un compte pour l'ouvrir.
       </Gate>
     );
   }
@@ -54,28 +67,26 @@ export function CreatorStudio() {
   if (status === "loading" || !profile) {
     return (
       <main className="shell studio">
-        <Spinner label="Nous ouvrons ton studio" />
+        <Spinner label="Nous ouvrons ton espace" />
       </main>
     );
   }
 
-  if (!profile.is_creator) return <BecomeCreator />;
-
   return (
     <main className="shell studio">
-      <StudioHeader creator={profile} />
-      <StudioTabs creator={profile} />
+      <SpaceHeader creator={profile} />
+      <SpaceTabs creator={profile} />
     </main>
   );
 }
 
 /* ---------------------------------------------------------------- en-tête */
 
-type StudioHeaderProps = {
+type SpaceHeaderProps = {
   creator: CreatorProfile;
 };
 
-function StudioHeader({ creator }: StudioHeaderProps) {
+function SpaceHeader({ creator }: SpaceHeaderProps) {
   const [copied, setCopied] = useState(false);
   const publicUrl = `${BRAND.public_domain}/@${creator.link_in_bio_slug}`;
 
@@ -111,7 +122,8 @@ function StudioHeader({ creator }: StudioHeaderProps) {
           <p className="studio-head__meta">
             {creator.handle}
             <span className="studio-head__sep" aria-hidden="true" />
-            créateur depuis {formatMonthYear(creator.member_since)}
+            {creator.is_creator ? "créateur" : "membre"} depuis{" "}
+            {formatMonthYear(creator.member_since)}
           </p>
         </div>
       </div>
@@ -123,11 +135,10 @@ function StudioHeader({ creator }: StudioHeaderProps) {
         </p>
 
         <div className="studio-head__actions">
-          {/* La vitrine publique arrive au lot suivant, d'où le bouton inerte. */}
-          <button type="button" className="btn btn--ghost btn--small">
+          <Link className="btn btn--ghost btn--small" to={`/@${creator.link_in_bio_slug}`}>
             <IconExternal />
             Voir ma page publique
-          </button>
+          </Link>
           <button type="button" className="btn btn--ghost btn--small" onClick={copy}>
             <IconCopy />
             {copied ? "Lien copié" : "Copier le lien"}
@@ -148,13 +159,17 @@ function StudioHeader({ creator }: StudioHeaderProps) {
 
 /* ---------------------------------------------------------------- onglets */
 
-function StudioTabs({ creator }: { creator: CreatorProfile }) {
-  const [active, setActive] = useState<TabId>("overview");
+function SpaceTabs({ creator }: { creator: CreatorProfile }) {
+  // Les onglets créateur disparaissent purement et simplement pour un membre
+  // simple : rien de verrouillé, rien de vide.
+  const tabs = TABS.filter((tab) => !tab.creatorOnly || creator.is_creator);
+
+  const [active, setActive] = useState<TabId>("forme");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   /** Flèches, Origine et Fin déplacent la sélection, comme attendu d'un onglet. */
   function onKeyDown(event: React.KeyboardEvent, index: number) {
-    const last = TABS.length - 1;
+    const last = tabs.length - 1;
     let next = index;
 
     if (event.key === "ArrowRight") next = index === last ? 0 : index + 1;
@@ -164,14 +179,14 @@ function StudioTabs({ creator }: { creator: CreatorProfile }) {
     else return;
 
     event.preventDefault();
-    setActive(TABS[next].id);
+    setActive(tabs[next].id);
     tabRefs.current[next]?.focus();
   }
 
   return (
     <>
-      <div className="tabs" role="tablist" aria-label="Sections du studio">
-        {TABS.map((tab, index) => (
+      <div className="tabs" role="tablist" aria-label="Sections de mon espace">
+        {tabs.map((tab, index) => (
           <button
             key={tab.id}
             ref={(node) => {
@@ -193,9 +208,16 @@ function StudioTabs({ creator }: { creator: CreatorProfile }) {
       </div>
 
       <div role="tabpanel" id={`panel-${active}`} aria-labelledby={`tab-${active}`} tabIndex={0}>
-        {active === "overview" && <StudioOverview stats={CREATOR_STATS} />}
-        {active === "links" && <StudioLinks creator={creator} />}
+        {active === "forme" && (
+          <>
+            <SpaceForMe />
+            {!creator.is_creator && <BecomeCreatorCard />}
+          </>
+        )}
+        {active === "quests" && <SpaceQuests />}
         {active === "lists" && <StudioLists creator={creator} />}
+        {active === "stats" && <StudioOverview stats={CREATOR_STATS} />}
+        {active === "links" && <StudioLinks creator={creator} />}
         {active === "offers" && <StudioOffers offers={PARTNER_OFFERS} />}
       </div>
     </>
@@ -226,15 +248,5 @@ function Gate({ title, children, action }: GateProps) {
         </Link>
       )}
     </main>
-  );
-}
-
-/** Le studio est réservé aux créateurs. */
-function BecomeCreator() {
-  return (
-    <Gate title="Deviens créateur">
-      Le studio réunit tes statistiques, ta page publique et tes partenariats. Il
-      s'ouvre dès que tu publies ta première liste ou ta première critique.
-    </Gate>
   );
 }

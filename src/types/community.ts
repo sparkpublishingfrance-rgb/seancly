@@ -48,3 +48,15 @@ export interface HoroscopeDay {
   /** Trois suggestions du jour, en texte libre. */
   picks: string[];
 }
+
+/** Progression du membre : niveau, expérience et paliers. */
+export interface Progression {
+  xp: number;
+  level: number;
+  /** Nom du palier courant, par exemple « Habitué du dernier rang ». */
+  level_label: string;
+  /** Expérience à atteindre pour le palier suivant. */
+  next_level_xp: number;
+  /** Titres terminés depuis le début. */
+  titles_watched: number;
+}

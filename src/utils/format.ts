@@ -1,5 +1,9 @@
 const NUMBER = new Intl.NumberFormat("fr-FR");
 const DECIMAL = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+const SCORE = new Intl.NumberFormat("fr-FR", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
 const MONTH_YEAR = new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" });
 
 /** Entier avec séparateurs de milliers français ("12 480"). */
@@ -10,6 +14,11 @@ export function formatNumber(value: number): string {
 /** Nombre avec au plus une décimale ("7,4"). */
 export function formatDecimal(value: number): string {
   return DECIMAL.format(value);
+}
+
+/** Note sur dix, toujours avec sa décimale ("8,0"). */
+export function formatScore(value: number): string {
+  return SCORE.format(value);
 }
 
 /** Variation signée, le signe étant porteur de sens ("+318", "-12"). */

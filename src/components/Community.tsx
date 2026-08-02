@@ -46,11 +46,16 @@ type GuildStripProps = {
   guild: Guild;
 };
 
+/**
+ * Séance de guilde en cours, présentée comme une découverte publique.
+ * Ce n'est pas l'activité du membre : c'est ce qui se passe en ce moment sur la
+ * plateforme, visible même sans compte.
+ */
 export function GuildStrip({ guild }: GuildStripProps) {
   const remaining = Math.max(guild.members - GUILD_FACES.length, 0);
 
   return (
-    <section className="shell" aria-label="Visionnage groupé">
+    <section className="shell" aria-labelledby="guild-title">
       <div className="guild">
         <div className="guild__avatars" aria-hidden="true">
           {GUILD_FACES.map((face) => (
@@ -63,11 +68,14 @@ export function GuildStrip({ guild }: GuildStripProps) {
           )}
         </div>
 
-        <p className="guild__text">
-          <strong>
-            {guild.emoji} {guild.name}
-          </strong>{" "}
-          visionne <strong>{guild.now_watching}</strong> ce soir
+        <p className="guild__text" id="guild-title">
+          <span className="guild__kicker">Des guildes regardent en ce moment</span>
+          <span>
+            <strong>
+              {guild.emoji} {guild.name}
+            </strong>{" "}
+            visionne <strong>{guild.now_watching}</strong> ce soir
+          </span>
         </p>
 
         {guild.live && (
@@ -78,7 +86,7 @@ export function GuildStrip({ guild }: GuildStripProps) {
         )}
 
         <button type="button" className="guild__join">
-          Rejoindre
+          Découvrir
         </button>
       </div>
     </section>

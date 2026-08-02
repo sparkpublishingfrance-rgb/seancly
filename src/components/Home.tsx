@@ -1,10 +1,16 @@
-import { HOROSCOPE_TODAY, LIVE_GUILD, QUESTS } from "../data/community";
-import { FEATURED, RAILS } from "../data/titles";
+import { LIVE_GUILD } from "../data/community";
+import { FEATURED, HOME_RAILS } from "../data/titles";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import { GuildStrip, HoroscopeBand, QuestsGrid } from "./Community";
+import { GuildStrip } from "./Community";
 import { Hero } from "./Hero";
 import { Rail } from "./Rail";
 
+/**
+ * Accueil : découverte de catalogue, rien de personnel.
+ * Un visiteur sans compte doit pouvoir le parcourir de bout en bout sans y
+ * croiser la moindre donnée de compte. L'horoscope, les quêtes et la reprise de
+ * visionnage vivent dans « Mon espace ».
+ */
 export function Home() {
   useDocumentTitle();
 
@@ -13,14 +19,11 @@ export function Home() {
       <Hero title={FEATURED} />
 
       <div className="rows">
-        <HoroscopeBand horoscope={HOROSCOPE_TODAY} />
         <GuildStrip guild={LIVE_GUILD} />
 
-        {RAILS.map((rail) => (
+        {HOME_RAILS.map((rail) => (
           <Rail rail={rail} key={rail.title} />
         ))}
-
-        <QuestsGrid quests={QUESTS} />
       </div>
     </main>
   );

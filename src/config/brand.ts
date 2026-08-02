@@ -22,15 +22,31 @@ export const BRAND = {
   notices: {
     inpi: "Marque en cours de dépôt, recherche d'antériorité INPI à faire (classes 9, 41, 42).",
     posters: "Les affiches sont des placeholders générés, aucune image distante.",
-    tmdb: "Les fiches viendront de TMDB. Attribution et logo à ajouter ici.",
   },
 } as const;
 
-/** Libellés de navigation principale. */
-export const NAV_ITEMS = [
-  "Accueil",
-  "Films",
-  "Séries",
-  "Guildes",
-  "Ma collection",
-] as const;
+/**
+ * Navigation principale : découverte uniquement, catalogue et social public.
+ * Tout ce qui appartient au membre passe par le menu de l'avatar, pas par ici.
+ * `to` vaut `null` tant que l'écran n'existe pas.
+ */
+export const NAV_ITEMS: { label: string; to: string | null }[] = [
+  { label: "Accueil", to: "/" },
+  { label: "Films", to: null },
+  { label: "Séries", to: null },
+  { label: "Guildes", to: null },
+];
+
+/** Réseaux du pied de page. Les comptes ne sont pas encore ouverts. */
+export const SOCIAL_LINKS: { label: string; href: string | null }[] = [
+  { label: "Instagram", href: null },
+  { label: "TikTok", href: null },
+  { label: "YouTube", href: null },
+];
+
+/**
+ * Mention exigée par TMDB dès que leurs données sont affichées.
+ * Le texte est imposé en anglais, on ne le traduit pas.
+ */
+export const TMDB_ATTRIBUTION =
+  "This product uses the TMDB API but is not endorsed or certified by TMDB.";

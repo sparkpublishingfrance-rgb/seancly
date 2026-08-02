@@ -2754,28 +2754,351 @@ a {
 
 .foot {
   border-top: 1px solid var(--line);
-  padding-block: 26px 44px;
   color: var(--muted);
   font-size: 12.5px;
 }
 
-.foot__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 78ch;
+.foot__grid {
+  display: grid;
+  grid-template-columns: 1.7fr repeat(3, minmax(0, 1fr));
+  gap: 28px 32px;
+  padding-block: 40px 30px;
 }
 
 .foot__brand {
-  margin-bottom: 12px;
+  margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 19px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text);
+}
+
+.foot__tagline {
+  margin: 0 0 16px;
+  max-width: 30ch;
+}
+
+.foot__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.foot__title {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.foot__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.foot__link {
+  color: #c6c0cc;
+  transition: color 0.18s ease;
+}
+
+.foot__link:hover {
+  color: var(--raspberry);
+}
+
+/* Pas de lien mort : ce qui n'existe pas encore reste du texte. */
+.foot__soon {
+  color: var(--muted);
+  opacity: 0.65;
+  cursor: default;
+}
+
+.foot__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-block: 20px 44px;
+  border-top: 1px solid var(--line);
+}
+
+.foot__tmdb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 12px;
+}
+
+/* Emplacement réservé au logo TMDB, posé avec les vraies fiches. */
+.foot__tmdb-logo {
+  width: 52px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+}
+
+.foot__notices {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 78ch;
+}
+
+.foot__copy {
+  margin: 0;
+}
+
+
+/* =========================================================================
+   Lot 6 : navigation, espace personnel, pages légales
+   ========================================================================= */
+
+.topbar__burger {
+  display: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  color: var(--text);
+  background: rgba(31, 31, 39, 0.7);
+}
+
+.topbar__mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px var(--gutter) 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.topbar__mobile .topbar__nav-link {
+  padding: 12px;
+  font-size: 15px;
+}
+
+/* Entrée dont l'écran n'existe pas encore : lisible, mais pas cliquable. */
+.topbar__nav-link--soon {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.topbar__nav-link--soon:hover {
+  color: var(--muted);
+  background: none;
+}
+
+/* Une section imbriquée dans « Mon espace » ne doit pas cumuler les gouttières. */
+.studio .shell {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.space-forme {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ------------------------------------------------------------ progression */
+
+.progression {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.progression__label {
+  margin: 0;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.progression__title {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.progression__track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.progression__bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--reward);
+}
+
+.progression__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progression__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.progression__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.progression__stats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.progression__stats strong {
+  color: var(--text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------- devenir créateur */
+
+.become {
+  padding: 22px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line);
+  background: rgba(22, 22, 28, 0.6);
+}
+
+.become__title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.become__text {
+  margin: 0 0 10px;
+  max-width: 68ch;
+  color: #c6c0cc;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.become__note {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------ pages légales */
+
+.legal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 820px;
+  padding-block: 48px 84px;
+}
+
+.legal__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.legal__intro {
+  margin: 0;
+  max-width: 66ch;
+  color: #c6c0cc;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.legal__draft {
+  width: 100%;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line);
+  background: var(--surface);
+}
+
+.legal__draft-label {
+  margin: 0 0 8px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.legal__draft-text {
+  margin: 0 0 16px;
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.legal__outline {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding-left: 20px;
+  color: #c6c0cc;
+  font-size: 13.5px;
+}
+
+/* --------------------------------------------- bande guilde, en découverte */
+
+.guild__kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* ------------------------------------------------------------ animations */
@@ -2836,6 +3159,15 @@ a {
   .topbar__nav,
   .topbar__search {
     display: none;
+  }
+
+  .topbar__burger {
+    display: grid;
+  }
+
+  .foot__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
   }
 
   .topbar__inner {

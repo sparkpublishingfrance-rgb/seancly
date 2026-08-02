@@ -27,7 +27,7 @@ export function Rail({ rail }: RailProps) {
         <ul className="rail__track">
           {titles.map((title) => (
             <li className="rail__item" key={title.id}>
-              <PosterCard title={title} />
+              <PosterCard title={title} showProgress={rail.show_progress} />
             </li>
           ))}
         </ul>

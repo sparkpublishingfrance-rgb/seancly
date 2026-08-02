@@ -96,4 +96,9 @@ export interface Rail {
   /** Sous-titre optionnel, sert à créditer la source de la reco. */
   by?: string;
   ids: number[];
+  /**
+   * Affiche l'avancement de visionnage sur les affiches.
+   * Réservé aux rangées personnelles : l'accueil n'expose aucune donnée de compte.
+   */
+  show_progress?: boolean;
 }
