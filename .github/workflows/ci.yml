@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Une seule série de vérifications par branche : un nouveau commit annule la
+# précédente au lieu de faire la queue.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Linter
+        run: npm run lint
+
+      # `npm run build` enchaîne la vérification des types puis la construction.
+      # Aucune variable d'environnement n'est nécessaire : sans base configurée,
+      # l'application se construit et reste consultable.
+      - name: Types et construction
+        run: npm run build
