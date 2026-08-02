@@ -27,8 +27,10 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
+      # `--deny-warnings` fait échouer sur un simple avertissement. En local le
+      # linter reste indulgent ; ici, rien ne passe.
       - name: Linter
-        run: npm run lint
+        run: npm run lint -- --deny-warnings
 
       # `npm run build` enchaîne la vérification des types puis la construction.
       # Aucune variable d'environnement n'est nécessaire : sans base configurée,
