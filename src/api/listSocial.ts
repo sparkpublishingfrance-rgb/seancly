@@ -247,41 +247,71 @@ export async function getListComments(
   return { comments, nextCursor };
 }
 
-/** Ce que la base renvoie après insertion d'un commentaire. */
-type InsertedComment = {
-  id: string;
-  author_id: string;
-  body: string;
-  created_at: string;
-  updated_at: string;
+/** Réponse de la fonction de modération. */
+/**
+ * Sort d'un commentaire soumis.
+ * Une variante par statut plutôt que deux variantes à statut multiple : le
+ * discriminant doit être un littéral unique pour que le typage suive.
+ */
+export type PostedComment =
+  | { status: "visible"; comment: ListComment }
+  | { status: "flagged"; comment: ListComment }
+  | { status: "hidden"; message: string }
+  | { status: "blocked"; message: string };
+
+type ModerationResponse = {
+  status?: "visible" | "flagged" | "hidden" | "blocked";
+  message?: string;
+  error?: string;
+  comment?: {
+    id: string;
+    author_id: string;
+    body: string;
+    created_at: string;
+    updated_at: string;
+  };
 };
 
+/**
+ * Publie un commentaire en passant par la modération.
+ *
+ * L'insertion directe n'est plus permise : la fonction en base classe le texte
+ * avant de l'écrire, et renvoie ce qu'il est advenu du commentaire.
+ */
 export async function addListComment(
   listId: string,
-  authorId: string,
+  author: FeedProfile,
   body: string,
-): Promise<ListComment> {
-  const client = requireSupabase();
-
-  const row = unwrap(
-    await client
-      .from("list_comments")
-      .insert({ list_id: listId, author_id: authorId, body })
-      .select("id, author_id, body, created_at, updated_at")
-      .single<InsertedComment>(),
-    "publier ton commentaire",
+): Promise<PostedComment> {
+  const { data, error } = await requireSupabase().functions.invoke<ModerationResponse>(
+    "moderate-comment",
+    { body: { listId, body } },
   );
 
-  const authors = await loadProfiles([row.author_id]);
-  const author = authors.get(row.author_id);
-  if (!author) throw new DataError("Nous n'avons pas retrouvé ton profil.");
+  if (error) {
+    throw new DataError("Nous n'avons pas réussi à publier ton commentaire.", undefined);
+  }
+  if (!data || data.error) {
+    throw new DataError(data?.error ?? "Nous n'avons pas réussi à publier ton commentaire.");
+  }
+
+  if (data.status === "hidden" || data.status === "blocked") {
+    return { status: data.status, message: data.message ?? "" };
+  }
+
+  if (!data.comment) {
+    throw new DataError("Nous n'avons pas réussi à publier ton commentaire.");
+  }
 
   return {
-    id: row.id,
-    body: row.body,
-    createdAt: row.created_at,
-    editedAt: null,
-    author,
+    status: data.status === "flagged" ? "flagged" : "visible",
+    comment: {
+      id: data.comment.id,
+      body: data.comment.body,
+      createdAt: data.comment.created_at,
+      editedAt: null,
+      author,
+    },
   };
 }
 

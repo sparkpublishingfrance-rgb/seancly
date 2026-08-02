@@ -118,7 +118,7 @@ type AccountMenuProps = {
 
 /** Menu de l'avatar : c'est le seul chemin vers l'espace personnel. */
 function AccountMenu({ initials, name }: AccountMenuProps) {
-  const { signOut } = useAuth();
+  const { profile, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
 
@@ -173,6 +173,13 @@ function AccountMenu({ initials, name }: AccountMenuProps) {
               Mes listes
             </Link>
           </li>
+          {profile?.is_admin && (
+            <li role="none">
+              <Link className="account__item" role="menuitem" to="/moderation">
+                Modération
+              </Link>
+            </li>
+          )}
           <li role="none">
             <button
               type="button"

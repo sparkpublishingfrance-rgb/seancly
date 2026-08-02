@@ -21,6 +21,7 @@ l'ordre des noms de fichiers. Chaque fichier est relu avant exécution.
 | 9 | `20260802000009_activity_community_scope.sql` | lecture d'`activity` ouverte aux membres connectés, `anon` exclu |
 | 10 | `20260803000010_activity_verbs_lists.sql` | deux verbes de plus, **à exécuter seule** |
 | 11 | `20260803000011_list_social.sql` | `list_follows`, `list_comments`, `list_stats`, `popular_lists`, triggers |
+| 12 | `20260803000012_comment_moderation.sql` | `moderation_status`, `comment_moderation`, rôle admin, file et décisions |
 
 `films_catalog` et tout ce qui dépend de TMDB arrivent dans un lot ultérieur,
 une fois l'accord commercial signé. En attendant, `title_ref` reste du texte
@@ -48,10 +49,33 @@ Trois choix méritent d'être signalés :
 - **Les clics de liens passent par une fonction.** `register_link_click` est le
   seul chemin d'écriture sur `clicks` ; personne n'a le droit `update` sur cette
   colonne, pas même le propriétaire du lien.
+- **Un commentaire ne s'insère plus depuis le client.** La modération serait
+  contournable en une requête directe, donc `authenticated` perd le droit
+  `insert` sur `list_comments` : seule la fonction `publish_moderated_comment`,
+  appelée en `service_role` par l'Edge Function, écrit un commentaire, et elle
+  journalise la décision dans le même mouvement.
 - **`activity` est en lecture seule pour tout le monde.** Aucun rôle client n'a
   `insert`, `update` ni `delete` dessus. Les lignes naissent et meurent avec les
   triggers posés sur `ratings`, `lists`, `list_items` et `follows`, ce qui rend
   impossible la fabrication d'un faux événement.
+
+## Edge Functions
+
+`moderate-comment` classe chaque commentaire avant publication. Elle se déploie
+à part des migrations :
+
+```sh
+supabase functions deploy moderate-comment
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+```
+
+La clé vit dans les secrets de la fonction. Elle n'apparaît ni dans le bundle
+client, ni dans le dépôt. `SUPABASE_URL`, `SUPABASE_ANON_KEY` et
+`SUPABASE_SERVICE_ROLE_KEY` sont fournis automatiquement à la fonction.
+
+En cas d'échec du classement, quelle qu'en soit la cause, le commentaire est
+publié en niveau 1 : visible, mais signalé pour relecture. Ni blocage
+silencieux, ni laisser-passer.
 
 ## Vérification de la RLS
 
@@ -96,6 +120,15 @@ Dernier passage : tous les cas au vert, y compris les cas croisés.
 | B masque un commentaire sur sa liste | retiré, texte inchangé |
 | A masque un commentaire sur la liste de B | sans effet |
 | anon lit les commentaires d'une liste privée | zéro ligne |
+| A insère directement dans `list_comments` | refus |
+| A insère dans `comment_moderation` | refus |
+| A non admin lit `comment_moderation` | zéro ligne |
+| A non admin appelle `moderation_queue` | zéro ligne |
+| A non admin appelle `review_comment` | exception |
+| anon lit un commentaire `hidden` ou `blocked` | zéro ligne |
+| son auteur lit son commentaire masqué | visible de lui seul |
+| un commentaire masqué produit un événement de fil | non |
+| approuver un masqué le fait réapparaître dans le fil | oui |
 
 Une remarque relevée en vérifiant : une fois qu'un propriétaire a masqué un
 commentaire, il ne le voit plus lui-même, la policy de lecture ne couvrant que
