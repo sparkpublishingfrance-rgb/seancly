@@ -262,6 +262,16 @@ function ActorName({ profile }: { profile: FeedProfile }) {
   );
 }
 
+/** Renvoi vers la liste concernée, quand l'événement en désigne une. */
+function ListLink({ event }: { event: FeedEvent }) {
+  if (!event.listId) return <span className="feed__object">{event.listTitle}</span>;
+  return (
+    <Link className="feed__object" to={`/liste/${event.listId}`}>
+      {event.listTitle}
+    </Link>
+  );
+}
+
 /** La phrase d'activité, en une ligne de sens par verbe. */
 function FeedSentence({ event }: { event: FeedEvent }) {
   switch (event.verb) {
@@ -288,14 +298,29 @@ function FeedSentence({ event }: { event: FeedEvent }) {
     case "created_list":
       return (
         <>
-          a créé la liste <span className="feed__object">{event.listTitle}</span>
+          a créé la liste <ListLink event={event} />
+        </>
+      );
+
+    case "followed_list":
+      return (
+        <>
+          suit la liste <ListLink event={event} />
+        </>
+      );
+
+    case "commented_list":
+      return (
+        <>
+          a commenté la liste <ListLink event={event} />
+          {event.excerpt && <span className="feed__excerpt">« {event.excerpt} »</span>}
         </>
       );
 
     case "added_to_list":
       return (
         <>
-          a enrichi sa liste <span className="feed__object">{event.listTitle}</span>
+          a enrichi sa liste <ListLink event={event} />
         </>
       );
 

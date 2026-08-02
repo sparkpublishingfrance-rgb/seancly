@@ -2,8 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import type { CreatorList, CreatorProfile, OfferStatus, PartnerOffer } from "../types/studio";
 import { messageOf } from "../api/client";
 import { createList, deleteList, getMyLists } from "../api/lists";
+import type { PublicList } from "../api/listSocial";
+import { getFollowedLists } from "../api/listSocial";
 import { formatNumber } from "../utils/format";
 import { Notice, Spinner } from "./StateMessage";
+import { Link } from "react-router-dom";
 import { IconPlus, IconTrash } from "./icons";
 
 type StudioListsProps = {
@@ -85,7 +88,15 @@ export function StudioLists({ creator }: StudioListsProps) {
           {lists.map((list) => (
             <li className="listcard" key={list.id}>
               <div className="listcard__head">
-                <h3 className="listcard__title">{list.title}</h3>
+                <h3 className="listcard__title">
+                  {list.is_public ? (
+                    <Link className="listcard__link" to={`/liste/${list.id}`}>
+                      {list.title}
+                    </Link>
+                  ) : (
+                    list.title
+                  )}
+                </h3>
                 <button
                   type="button"
                   className="iconbtn iconbtn--danger"
@@ -114,7 +125,69 @@ export function StudioLists({ creator }: StudioListsProps) {
           ))}
         </ul>
       )}
+
+      <FollowedLists viewerId={creator.id} />
     </div>
+  );
+}
+
+/** Listes composées par d'autres, que le membre a choisi de suivre. */
+function FollowedLists({ viewerId }: { viewerId: string }) {
+  const [lists, setLists] = useState<PublicList[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+
+    void getFollowedLists(viewerId)
+      .then((loaded) => {
+        if (alive) setLists(loaded);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, [viewerId]);
+
+  if (loading) return null;
+
+  return (
+    <section className="studio-block" aria-labelledby="followed-lists">
+      <div className="studio-block__head">
+        <h2 className="studio-block__title" id="followed-lists">
+          Listes que je suis
+        </h2>
+      </div>
+
+      {lists.length === 0 ? (
+        <p className="studio-empty">
+          Tu ne suis encore aucune liste. Ouvre-en une depuis l'accueil pour la
+          garder sous la main.
+        </p>
+      ) : (
+        <ul className="listgrid">
+          {lists.map((list) => (
+            <li className="listcard" key={list.id}>
+              <h3 className="listcard__title">
+                <Link className="listcard__link" to={`/liste/${list.id}`}>
+                  {list.title}
+                </Link>
+              </h3>
+              <p className="listcard__meta">
+                par {list.owner.displayName}
+                <span className="listcard__sep" aria-hidden="true" />
+                {formatNumber(list.stats.items)}
+                {list.stats.items > 1 ? " titres" : " titre"}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
