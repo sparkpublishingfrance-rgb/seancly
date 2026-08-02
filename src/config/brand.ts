@@ -1,26 +1,26 @@
 /**
  * Point unique de vérité pour le nom de la marque.
- * Le nom est provisoire et reste à valider auprès de l'INPI : on le change ici,
- * nulle part ailleurs.
+ * La recherche d'antériorité INPI reste à faire avant tout dépôt : on change le
+ * nom ici, nulle part ailleurs.
  */
 export const BRAND = {
   /** Nom complet, utilisé pour les textes et le titre du document. */
-  name: "Séquence",
+  name: "Seancly",
   /**
-   * Logo découpé en trois morceaux pour colorer la lettre accentuée en or.
+   * Logo découpé en trois morceaux pour colorer une lettre en or.
    * start + accent + end doit toujours reformer `name`.
    */
   logo: {
     start: "S",
-    accent: "é",
-    end: "quence",
+    accent: "e",
+    end: "ancly",
   },
   tagline: "Le cinéma, mais avec du monde autour.",
-  /** Domaine des pages publiques de créateur. Provisoire, comme le nom. */
-  public_domain: "sequence.app",
+  /** Domaine des pages publiques de créateur. */
+  public_domain: "seancly.app",
   /** Mentions à afficher tant que la marque et les sources ne sont pas arrêtées. */
   notices: {
-    inpi: "Nom provisoire, à valider INPI.",
+    inpi: "Marque en cours de dépôt, recherche d'antériorité INPI à faire (classes 9, 41, 42).",
     posters: "Les affiches sont des placeholders générés, aucune image distante.",
     tmdb: "Les fiches viendront de TMDB. Attribution et logo à ajouter ici.",
   },

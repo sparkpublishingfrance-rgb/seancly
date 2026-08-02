@@ -1,10 +1,14 @@
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BRAND, NAV_ITEMS } from "../config/brand";
-import { COINS, CURRENT_USER } from "../data/community";
+import { COINS } from "../data/community";
+import { useAuth } from "../context/auth-context";
 import { IconCoin, IconSearch } from "./icons";
 
 export function TopBar() {
   const { pathname } = useLocation();
+  const { status, profile } = useAuth();
+  const signedIn = status === "signed-in";
 
   return (
     <header className="topbar">
@@ -49,14 +53,16 @@ export function TopBar() {
           />
         </div>
 
-        <span className="topbar__coins" title={`${COINS} pièces`}>
-          <IconCoin />
-          {COINS}
-          <span className="sr-only">pièces</span>
-        </span>
+        {signedIn && (
+          <span className="topbar__coins" title={`${COINS} pièces`}>
+            <IconCoin />
+            {COINS}
+            <span className="sr-only">pièces</span>
+          </span>
+        )}
 
-        {/* Espace privé, réservé aux créateurs. */}
-        {CURRENT_USER.is_creator && (
+        {/* Espace privé, réservé aux comptes créateurs. */}
+        {signedIn && profile?.is_creator && (
           <Link
             className="topbar__studio"
             to="/studio"
@@ -66,14 +72,87 @@ export function TopBar() {
           </Link>
         )}
 
-        <button
-          type="button"
-          className="topbar__avatar"
-          aria-label={`Compte de ${CURRENT_USER.display_name}`}
-        >
-          {CURRENT_USER.initials}
-        </button>
+        {signedIn && profile ? (
+          <AccountMenu initials={profile.initials} name={profile.display_name} />
+        ) : (
+          <Link className="topbar__signin" to="/connexion">
+            Se connecter
+          </Link>
+        )}
       </div>
     </header>
+  );
+}
+
+type AccountMenuProps = {
+  initials: string;
+  name: string;
+};
+
+/** Menu de l'avatar : accès au studio et déconnexion. */
+function AccountMenu({ initials, name }: AccountMenuProps) {
+  const { profile, signOut } = useAuth();
+  const [open, setOpen] = useState(false);
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(event: MouseEvent) {
+      if (!container.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div className="account" ref={container}>
+      <button
+        type="button"
+        className="topbar__avatar"
+        aria-label={`Compte de ${name}`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        {initials}
+      </button>
+
+      {open && (
+        <ul className="account__menu" role="menu">
+          <li role="none" className="account__who">
+            {name}
+          </li>
+          {profile?.is_creator && (
+            <li role="none">
+              <Link className="account__item" role="menuitem" to="/studio">
+                Mon studio
+              </Link>
+            </li>
+          )}
+          <li role="none">
+            <button
+              type="button"
+              role="menuitem"
+              className="account__item"
+              onClick={() => {
+                setOpen(false);
+                void signOut();
+              }}
+            >
+              Se déconnecter
+            </button>
+          </li>
+        </ul>
+      )}
+    </div>
   );
 }

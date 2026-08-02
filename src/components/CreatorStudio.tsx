@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { CreatorPlan, CreatorProfile } from "../types/studio";
-import { CREATOR_LISTS, CREATOR_STATS, CURRENT_CREATOR, PARTNER_OFFERS } from "../data/studio";
-import { CURRENT_USER } from "../data/community";
+import { CREATOR_STATS, PARTNER_OFFERS } from "../data/studio";
 import { BRAND } from "../config/brand";
+import { useAuth } from "../context/auth-context";
 import { formatMonthYear } from "../utils/format";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { Spinner } from "./StateMessage";
 import { StudioLinks } from "./StudioLinks";
 import { StudioLists, StudioOffers } from "./StudioLists";
 import { StudioOverview } from "./StudioOverview";
@@ -29,12 +30,41 @@ const PLAN_LABELS: Record<CreatorPlan, string> = {
 export function CreatorStudio() {
   useDocumentTitle("Studio");
 
-  if (!CURRENT_USER.is_creator) return <BecomeCreator />;
+  const { status, profile } = useAuth();
+
+  if (status === "unconfigured") {
+    return (
+      <Gate title="Studio hors ligne">
+        La base n'est pas encore reliée à cette installation, donc ton studio n'a rien
+        à afficher. Renseigne les variables d'environnement Supabase, puis relance le
+        serveur.
+      </Gate>
+    );
+  }
+
+  if (status === "signed-out") {
+    return (
+      <Gate title="Connecte-toi" action={{ to: "/connexion", label: "Se connecter" }}>
+        Le studio est ton espace privé : tes statistiques, ta page publique et tes
+        partenariats. Il te faut un compte pour l'ouvrir.
+      </Gate>
+    );
+  }
+
+  if (status === "loading" || !profile) {
+    return (
+      <main className="shell studio">
+        <Spinner label="Nous ouvrons ton studio" />
+      </main>
+    );
+  }
+
+  if (!profile.is_creator) return <BecomeCreator />;
 
   return (
     <main className="shell studio">
-      <StudioHeader creator={CURRENT_CREATOR} />
-      <StudioTabs />
+      <StudioHeader creator={profile} />
+      <StudioTabs creator={profile} />
     </main>
   );
 }
@@ -93,7 +123,7 @@ function StudioHeader({ creator }: StudioHeaderProps) {
         </p>
 
         <div className="studio-head__actions">
-          {/* La vitrine publique arrive au lot suivant, d'où le lien vers l'aperçu. */}
+          {/* La vitrine publique arrive au lot suivant, d'où le bouton inerte. */}
           <button type="button" className="btn btn--ghost btn--small">
             <IconExternal />
             Voir ma page publique
@@ -118,7 +148,7 @@ function StudioHeader({ creator }: StudioHeaderProps) {
 
 /* ---------------------------------------------------------------- onglets */
 
-function StudioTabs() {
+function StudioTabs({ creator }: { creator: CreatorProfile }) {
   const [active, setActive] = useState<TabId>("overview");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -164,28 +194,47 @@ function StudioTabs() {
 
       <div role="tabpanel" id={`panel-${active}`} aria-labelledby={`tab-${active}`} tabIndex={0}>
         {active === "overview" && <StudioOverview stats={CREATOR_STATS} />}
-        {active === "links" && <StudioLinks creator={CURRENT_CREATOR} />}
-        {active === "lists" && <StudioLists lists={CREATOR_LISTS} />}
+        {active === "links" && <StudioLinks creator={creator} />}
+        {active === "lists" && <StudioLists creator={creator} />}
         {active === "offers" && <StudioOffers offers={PARTNER_OFFERS} />}
       </div>
     </>
   );
 }
 
-/* ------------------------------------------------------- accès non créateur */
+/* ------------------------------------------------------------ écrans d'accès */
 
-/** Le studio est réservé aux créateurs. On explique plutôt que de rejeter. */
-function BecomeCreator() {
+type GateProps = {
+  title: string;
+  children: React.ReactNode;
+  action?: { to: string; label: string };
+};
+
+/** Écran plein pour un accès refusé ou impossible. On explique, on ne rejette pas. */
+function Gate({ title, children, action }: GateProps) {
   return (
     <main className="shell empty">
-      <h1 className="empty__title">Deviens créateur</h1>
-      <p className="empty__body">
-        Le studio réunit tes statistiques, ta page publique et tes partenariats. Il
-        s'ouvre dès que tu publies ta première liste ou ta première critique.
-      </p>
-      <Link className="btn btn--primary" to="/">
-        Découvrir le catalogue
-      </Link>
+      <h1 className="empty__title">{title}</h1>
+      <p className="empty__body">{children}</p>
+      {action ? (
+        <Link className="btn btn--primary" to={action.to}>
+          {action.label}
+        </Link>
+      ) : (
+        <Link className="btn btn--ghost" to="/">
+          Retour à l'accueil
+        </Link>
+      )}
     </main>
+  );
+}
+
+/** Le studio est réservé aux créateurs. */
+function BecomeCreator() {
+  return (
+    <Gate title="Deviens créateur">
+      Le studio réunit tes statistiques, ta page publique et tes partenariats. Il
+      s'ouvre dès que tu publies ta première liste ou ta première critique.
+    </Gate>
   );
 }

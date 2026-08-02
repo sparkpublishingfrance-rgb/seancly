@@ -1,13 +1,10 @@
-import type { Guild, HoroscopeDay, Profile, Quest } from "../types/community";
+import type { Guild, HoroscopeDay, Quest } from "../types/community";
 
-/** Utilisateur connecté, en dur tant qu'il n'y a pas d'authentification. */
-export const CURRENT_USER: Profile = {
-  handle: "@alexis",
-  display_name: "Alexis Duval",
-  initials: "AD",
-  verified: true,
-  is_creator: true,
-};
+/**
+ * Ce qui reste mocké côté communauté.
+ * L'identité vient maintenant de la session, via `useAuth`. Horoscope, guildes
+ * et quêtes attendent leurs tables.
+ */
 
 /** Monnaie de la gamification, affichée dans la barre du haut. */
 export const COINS = 240;

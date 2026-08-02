@@ -1,27 +1,12 @@
-import type {
-  CreatorList,
-  CreatorProfile,
-  CreatorStats,
-  LinkInBioItem,
-  PartnerOffer,
-  StatSeries,
-} from "../types/studio";
+import type { CreatorStats, LinkInBioItem, PartnerOffer, StatSeries } from "../types/studio";
 
 /**
- * Le créateur connecté. Viendra de la session Supabase le jour venu ; ici c'est
- * une constante, et l'application ne doit lire l'identité que par ce point.
+ * Ce qui reste mocké dans le studio.
+ *
+ * L'identité, les listes et les liens viennent désormais de Supabase, via
+ * `src/api/`. Les statistiques d'audience et les offres de partenariat n'ont
+ * pas encore de table : elles attendent leur propre lot.
  */
-export const CURRENT_CREATOR: CreatorProfile = {
-  handle: "@alexis",
-  display_name: "Alexis Duval",
-  initials: "AD",
-  verified: true,
-  member_since: "2023-04-18",
-  plan: "cine_plus",
-  bio: "Je parle de polars français, de huis clos et de tout ce qui se passe après minuit. Une critique par jour, une liste par semaine.",
-  link_in_bio_slug: "alexis-cine",
-};
-
 export const CREATOR_STATS: CreatorStats = {
   followers: 12480,
   followers_delta_30d: 318,
@@ -79,64 +64,13 @@ export const LINK_CLICKS_SERIES: StatSeries = {
 export const CREATOR_HIGHLIGHT =
   "Ta liste « Huis clos parfaits » vient de dépasser 3 000 vues.";
 
-export const LINK_IN_BIO: LinkInBioItem[] = [
-  {
-    id: 1,
-    label: "Ma chaîne YouTube",
-    url: "https://youtube.com/@alexiscine",
-    clicks: 1204,
-    enabled: true,
-  },
-  {
-    id: 2,
-    label: "Instagram",
-    url: "https://instagram.com/alexis.cine",
-    clicks: 862,
-    enabled: true,
-  },
-  {
-    id: 3,
-    label: "La Séance du dimanche, ma newsletter",
-    url: "https://laseance.substack.com",
-    clicks: 496,
-    enabled: true,
-  },
-  {
-    id: 4,
-    label: "Affiches sérigraphiées",
-    url: "https://boutique.alexiscine.fr",
-    clicks: 415,
-    enabled: false,
-  },
-  {
-    id: 5,
-    label: "Soutenir mon travail",
-    url: "https://patreon.com/alexiscine",
-    clicks: 331,
-    enabled: true,
-  },
-];
-
 /** Propositions du bouton « Ajouter un lien », tant qu'il n'y a pas de formulaire. */
-export const LINK_SUGGESTIONS: Omit<LinkInBioItem, "id">[] = [
-  { label: "Twitch", url: "https://twitch.tv/alexiscine", clicks: 0, enabled: true },
-  { label: "TikTok", url: "https://tiktok.com/@alexiscine", clicks: 0, enabled: true },
-  { label: "Mon podcast", url: "https://podcast.alexiscine.fr", clicks: 0, enabled: true },
-  { label: "Me contacter", url: "mailto:contact@alexiscine.fr", clicks: 0, enabled: true },
-];
-
-export const CREATOR_LISTS: CreatorList[] = [
-  {
-    id: 1,
-    title: "Le polar français des années 2020",
-    item_count: 24,
-    views: 4820,
-    is_public: true,
-  },
-  { id: 2, title: "Huis clos parfaits", item_count: 12, views: 3110, is_public: true },
-  { id: 3, title: "À voir avant la fin du monde", item_count: 18, views: 1245, is_public: true },
-  { id: 4, title: "Repérages pour la chaîne", item_count: 31, views: 0, is_public: false },
-  { id: 5, title: "Néo-noir européen", item_count: 9, views: 980, is_public: true },
+export const LINK_SUGGESTIONS: Pick<LinkInBioItem, "label" | "url">[] = [
+  { label: "Ma chaîne YouTube", url: "https://youtube.com/@moi" },
+  { label: "Instagram", url: "https://instagram.com/moi" },
+  { label: "Ma newsletter", url: "https://manewsletter.substack.com" },
+  { label: "Soutenir mon travail", url: "https://patreon.com/moi" },
+  { label: "Me contacter", url: "mailto:contact@exemple.fr" },
 ];
 
 export const PARTNER_OFFERS: PartnerOffer[] = [

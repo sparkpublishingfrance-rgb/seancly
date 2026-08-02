@@ -1,0 +1,186 @@
+/**
+ * Types du schéma Supabase, écrits à la main et alignés sur les migrations de
+ * `supabase/migrations/`. À régénérer avec `supabase gen types typescript` dès
+ * que la CLI sera branchée sur le projet.
+ *
+ * Toute modification du schéma doit être répercutée ici dans le même commit,
+ * sans quoi la couche `src/api/` ment sur ce qu'elle reçoit.
+ */
+
+export type CreatorPlanRow = "free" | "pro" | "cine_plus";
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          handle: string;
+          display_name: string;
+          bio: string | null;
+          avatar_color: string;
+          is_creator: boolean;
+          plan: CreatorPlanRow;
+          verified: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          handle: string;
+          display_name: string;
+          bio?: string | null;
+          avatar_color?: string;
+        };
+        Update: {
+          handle?: string;
+          display_name?: string;
+          bio?: string | null;
+          avatar_color?: string;
+        };
+        Relationships: [{ foreignKeyName: "profiles_id_fkey"; columns: ["id"]; isOneToOne: true; referencedRelation: "users"; referencedColumns: ["id"] }];
+      };
+      profile_private: {
+        Row: {
+          id: string;
+          birth_date: string | null;
+          birth_date_consent_at: string | null;
+        };
+        Insert: {
+          id: string;
+          birth_date?: string | null;
+          birth_date_consent_at?: string | null;
+        };
+        Update: {
+          birth_date?: string | null;
+          birth_date_consent_at?: string | null;
+        };
+        Relationships: [{ foreignKeyName: "profile_private_id_fkey"; columns: ["id"]; isOneToOne: true; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
+      lists: {
+        Row: {
+          id: string;
+          owner_id: string;
+          title: string;
+          is_public: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          title: string;
+          is_public?: boolean;
+        };
+        Update: {
+          title?: string;
+          is_public?: boolean;
+        };
+        Relationships: [{ foreignKeyName: "lists_owner_id_fkey"; columns: ["owner_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
+      list_items: {
+        Row: {
+          id: string;
+          list_id: string;
+          title_ref: string;
+          position: number;
+          added_at: string;
+        };
+        Insert: {
+          id?: string;
+          list_id: string;
+          title_ref: string;
+          position?: number;
+        };
+        Update: {
+          title_ref?: string;
+          position?: number;
+        };
+        Relationships: [{ foreignKeyName: "list_items_list_id_fkey"; columns: ["list_id"]; isOneToOne: false; referencedRelation: "lists"; referencedColumns: ["id"] }];
+      };
+      follows: {
+        Row: {
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
+        Insert: {
+          follower_id: string;
+          following_id: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [
+          { foreignKeyName: "follows_follower_id_fkey"; columns: ["follower_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "follows_following_id_fkey"; columns: ["following_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      ratings: {
+        Row: {
+          id: string;
+          author_id: string;
+          title_ref: string;
+          rating: number;
+          body: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          author_id: string;
+          title_ref: string;
+          rating: number;
+          body?: string | null;
+        };
+        Update: {
+          rating?: number;
+          body?: string | null;
+        };
+        Relationships: [{ foreignKeyName: "ratings_author_id_fkey"; columns: ["author_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
+      link_in_bio_items: {
+        Row: {
+          id: string;
+          owner_id: string;
+          label: string;
+          url: string;
+          position: number;
+          enabled: boolean;
+          clicks: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          label: string;
+          url: string;
+          position?: number;
+          enabled?: boolean;
+        };
+        Update: {
+          label?: string;
+          url?: string;
+          position?: number;
+          enabled?: boolean;
+        };
+        Relationships: [{ foreignKeyName: "link_in_bio_items_owner_id_fkey"; columns: ["owner_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
+    };
+    Views: {
+      follow_counts: {
+        Row: {
+          profile_id: string;
+          followers: number;
+          following: number;
+        };
+        Relationships: [];
+      };
+    };
+    Functions: {
+      register_link_click: {
+        Args: { target_link: string };
+        Returns: undefined;
+      };
+    };
+    Enums: {
+      creator_plan: CreatorPlanRow;
+    };
+  };
+}

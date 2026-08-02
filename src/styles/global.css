@@ -1,5 +1,5 @@
 /* =========================================================================
-   Séquence - direction artistique "salle obscure"
+   Seancly - direction artistique "salle obscure"
    Les tokens ci-dessous sont doublés en TypeScript dans src/config/theme.ts.
    ========================================================================= */
 
@@ -2234,6 +2234,317 @@ a {
   .links__preview {
     max-width: 380px;
   }
+}
+
+/* =========================================================================
+   Compte : connexion, menu d'avatar, états de chargement
+   ========================================================================= */
+
+.topbar__signin {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 241, 244, 0.2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.topbar__signin:hover {
+  border-color: rgba(244, 241, 244, 0.42);
+  background: rgba(31, 31, 39, 0.85);
+}
+
+.account {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.account__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  min-width: 190px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.95);
+}
+
+.account__who {
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.account__item {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  transition: background-color 0.16s ease;
+}
+
+.account__item:hover {
+  background: var(--surface-2);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.loading__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--raspberry);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.notice {
+  margin: 14px 0 0;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+
+.notice--error {
+  border-color: rgba(229, 113, 95, 0.4);
+  background: rgba(229, 113, 95, 0.1);
+  color: #f0a99c;
+}
+
+/* ------------------------------------------------------------- connexion */
+
+.signin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-block: 120px 100px;
+}
+
+.signin__card {
+  width: 100%;
+  max-width: 440px;
+  padding: 30px 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(192, 56, 106, 0.14) 0%, var(--surface) 46%);
+  text-align: center;
+}
+
+.signin__title {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.signin__intro {
+  margin: 0 0 20px;
+  color: #c6c0cc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.signin__intro code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  font-size: 12px;
+}
+
+.signin__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.signin__label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.signin__foot {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.signin__legal {
+  max-width: 440px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.55;
+}
+
+.field--block {
+  width: 100%;
+  height: 44px;
+  flex: none;
+  font-size: 14px;
+}
+
+.btn--block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------ notation */
+
+.rate {
+  position: relative;
+}
+
+.btn--rated {
+  border-color: rgba(201, 162, 75, 0.5);
+  color: var(--gold);
+}
+
+.rate__panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 20;
+  min-width: 250px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.95);
+}
+
+.rate__label {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rate__stars {
+  display: flex;
+  gap: 4px;
+}
+
+.rate__star {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  color: var(--line);
+}
+
+.rate__star-bg,
+.rate__star-fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  line-height: 0;
+}
+
+/* La moitié pleine se découpe à la largeur, d'où l'étoile figée à 24px. */
+.rate__star-fill {
+  overflow: hidden;
+  color: var(--gold);
+}
+
+.rate__star-fill svg {
+  width: 24px;
+  min-width: 24px;
+}
+
+.rate__half {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 50%;
+  height: 100%;
+}
+
+.rate__half--left {
+  left: 0;
+}
+
+.rate__half--right {
+  right: 0;
+}
+
+.rate__clear {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.rate__clear:hover {
+  color: var(--text);
+}
+
+/* ------------------------------------------------------ création de liste */
+
+.listform {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.listform .field {
+  flex: 1 1 220px;
+}
+
+.listform__visibility {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.listcard__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.listcard__head .listcard__title {
+  flex: 1;
 }
 
 /* ------------------------------------------------------------------ pied */

@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { CreatorProfile, LinkInBioItem } from "../types/studio";
-import { LINK_IN_BIO, LINK_SUGGESTIONS } from "../data/studio";
+import { LINK_SUGGESTIONS } from "../data/studio";
 import { BRAND } from "../config/brand";
+import { messageOf } from "../api/client";
+import {
+  createLinkInBioItem,
+  deleteLinkInBioItem,
+  getLinkInBioItems,
+  reorderLinkInBioItems,
+  updateLinkInBioItem,
+} from "../api/links";
 import { formatNumber } from "../utils/format";
+import { Notice, Spinner } from "./StateMessage";
 import {
   IconArrowVertical,
   IconCheck,
@@ -18,50 +27,98 @@ type StudioLinksProps = {
 
 /**
  * Gestion de la page « lien en bio », avec son aperçu.
- * Tout est en état local : rien n'est enregistré tant que la base n'existe pas.
+ * Les modifications partent en base immédiatement. L'affichage est optimiste :
+ * on montre le résultat tout de suite, et on recharge si la base refuse.
  */
 export function StudioLinks({ creator }: StudioLinksProps) {
-  const [links, setLinks] = useState<LinkInBioItem[]>(LINK_IN_BIO);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [links, setLinks] = useState<LinkInBioItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  function toggle(id: number) {
-    setLinks((current) =>
-      current.map((link) => (link.id === id ? { ...link, enabled: !link.enabled } : link)),
+  const reload = useCallback(async () => {
+    try {
+      setLinks(await getLinkInBioItems(creator.id));
+      setError(null);
+    } catch (cause) {
+      setError(messageOf(cause));
+    } finally {
+      setLoading(false);
+    }
+  }, [creator.id]);
+
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+
+  /** Applique un changement local, puis le confirme en base. */
+  async function persist(optimistic: LinkInBioItem[], action: () => Promise<void>) {
+    const previous = links;
+    setLinks(optimistic);
+    setError(null);
+
+    try {
+      await action();
+    } catch (cause) {
+      setLinks(previous);
+      setError(messageOf(cause));
+      void reload();
+    }
+  }
+
+  function toggle(item: LinkInBioItem) {
+    void persist(
+      links.map((link) =>
+        link.id === item.id ? { ...link, enabled: !link.enabled } : link,
+      ),
+      () => updateLinkInBioItem(item.id, { enabled: !item.enabled }),
     );
   }
 
   function move(index: number, direction: -1 | 1) {
-    setLinks((current) => {
-      const target = index + direction;
-      if (target < 0 || target >= current.length) return current;
-      const next = [...current];
-      const [moved] = next.splice(index, 1);
-      next.splice(target, 0, moved);
-      return next;
-    });
+    const target = index + direction;
+    if (target < 0 || target >= links.length) return;
+
+    const next = [...links];
+    const [moved] = next.splice(index, 1);
+    next.splice(target, 0, moved);
+
+    void persist(next, () => reorderLinkInBioItems(next));
   }
 
-  function remove(id: number) {
-    setLinks((current) => current.filter((link) => link.id !== id));
-    setEditingId((current) => (current === id ? null : current));
-  }
-
-  function update(id: number, label: string, url: string) {
-    setLinks((current) =>
-      current.map((link) => (link.id === id ? { ...link, label, url } : link)),
+  function remove(item: LinkInBioItem) {
+    setEditingId((current) => (current === item.id ? null : current));
+    void persist(
+      links.filter((link) => link.id !== item.id),
+      () => deleteLinkInBioItem(item.id),
     );
+  }
+
+  function update(item: LinkInBioItem, label: string, url: string) {
     setEditingId(null);
+    void persist(
+      links.map((link) => (link.id === item.id ? { ...link, label, url } : link)),
+      () => updateLinkInBioItem(item.id, { label, url }),
+    );
   }
 
   /** Ajoute une suggestion non encore présente, faute de formulaire de création. */
-  function add() {
+  async function add() {
     const used = new Set(links.map((link) => link.label));
     const suggestion = LINK_SUGGESTIONS.find((item) => !used.has(item.label));
     if (!suggestion) return;
 
-    const nextId = links.reduce((max, link) => Math.max(max, link.id), 0) + 1;
-    setLinks((current) => [...current, { ...suggestion, id: nextId }]);
-    setEditingId(nextId);
+    try {
+      const created = await createLinkInBioItem(creator.id, {
+        ...suggestion,
+        position: links.length,
+      });
+      setLinks((current) => [...current, created]);
+      setEditingId(created.id);
+      setError(null);
+    } catch (cause) {
+      setError(messageOf(cause));
+    }
   }
 
   const visible = links.filter((link) => link.enabled);
@@ -73,13 +130,22 @@ export function StudioLinks({ creator }: StudioLinksProps) {
           <h2 className="studio-block__title" id="links-title">
             Tes liens
           </h2>
-          <button type="button" className="btn btn--ghost btn--small" onClick={add}>
+          <button
+            type="button"
+            className="btn btn--ghost btn--small"
+            onClick={() => void add()}
+            disabled={loading}
+          >
             <IconPlus size={14} />
             Ajouter un lien
           </button>
         </div>
 
-        {links.length === 0 ? (
+        {error && <Notice tone="error">{error}</Notice>}
+
+        {loading ? (
+          <Spinner label="Nous chargeons tes liens" />
+        ) : links.length === 0 ? (
           <p className="studio-empty">Ajoute ton premier lien pour construire ta page.</p>
         ) : (
           <ul className="linklist">
@@ -110,7 +176,7 @@ export function StudioLinks({ creator }: StudioLinksProps) {
                   <LinkEditor
                     link={link}
                     onCancel={() => setEditingId(null)}
-                    onSave={(label, url) => update(link.id, label, url)}
+                    onSave={(label, url) => update(link, label, url)}
                   />
                 ) : (
                   <>
@@ -129,7 +195,7 @@ export function StudioLinks({ creator }: StudioLinksProps) {
                       role="switch"
                       aria-checked={link.enabled}
                       className="switch"
-                      onClick={() => toggle(link.id)}
+                      onClick={() => toggle(link)}
                     >
                       <span className="switch__knob" />
                       <span className="sr-only">
@@ -148,7 +214,7 @@ export function StudioLinks({ creator }: StudioLinksProps) {
                     <button
                       type="button"
                       className="iconbtn iconbtn--danger"
-                      onClick={() => remove(link.id)}
+                      onClick={() => remove(link)}
                       aria-label={`Supprimer ${link.label}`}
                     >
                       <IconTrash />
@@ -159,11 +225,6 @@ export function StudioLinks({ creator }: StudioLinksProps) {
             ))}
           </ul>
         )}
-
-        <p className="studio-note">
-          Nous n'enregistrons rien pour l'instant : ces réglages disparaissent au
-          rechargement de la page.
-        </p>
       </section>
 
       <aside className="links__preview" aria-label="Aperçu de ta page publique">
@@ -175,7 +236,7 @@ export function StudioLinks({ creator }: StudioLinksProps) {
           </span>
           <p className="preview__name">{creator.display_name}</p>
           <p className="preview__handle">{creator.handle}</p>
-          <p className="preview__bio">{creator.bio}</p>
+          {creator.bio && <p className="preview__bio">{creator.bio}</p>}
 
           {visible.length === 0 ? (
             <p className="preview__empty">Aucun lien actif pour le moment.</p>
@@ -204,7 +265,7 @@ type LinkEditorProps = {
   onCancel: () => void;
 };
 
-/** Édition en ligne d'un lien. Local, sans validation d'URL à ce stade. */
+/** Édition en ligne d'un lien. La base valide le format de l'URL. */
 function LinkEditor({ link, onSave, onCancel }: LinkEditorProps) {
   const [label, setLabel] = useState(link.label);
   const [url, setUrl] = useState(link.url);

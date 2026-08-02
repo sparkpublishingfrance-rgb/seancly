@@ -8,6 +8,7 @@ import type {
 } from "../types/tmdb";
 import { avatarGradient } from "../config/theme";
 import { TMDB_IMAGE_BASE } from "../config/images";
+import { initialsOf } from "../utils/format";
 import { IconAlert, IconChevronDown, IconStar } from "./icons";
 
 /* ------------------------------------------------------------ note sociale */
@@ -245,13 +246,4 @@ export function CreditsBlock({ cast, crew }: CreditsBlockProps) {
       )}
     </section>
   );
-}
-
-/** Initiales d'un nom complet, deux lettres au maximum. */
-function initialsOf(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part.slice(0, 1).toUpperCase())
-    .join("");
 }

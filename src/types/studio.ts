@@ -9,15 +9,24 @@
 /** Formule d'abonnement. `cine_plus` est le palier premium, signé par l'or. */
 export type CreatorPlan = "free" | "pro" | "cine_plus";
 
+/**
+ * Profil du compte connecté, tel que l'application le manipule.
+ * Construit à partir de `public.profiles` par `src/api/profiles.ts`.
+ */
 export interface CreatorProfile {
+  id: string;
+  /** Avec l'arobase, contrairement à la colonne `handle` de la base. */
   handle: string;
   display_name: string;
   initials: string;
   verified: boolean;
+  is_creator: boolean;
   /** Date d'arrivée, format "YYYY-MM-DD". */
   member_since: string;
   plan: CreatorPlan;
   bio: string;
+  /** Teinte du dégradé d'avatar, à défaut de photo. */
+  avatar_color: string;
   /** Fragment d'URL de la page publique, sans le arobase. */
   link_in_bio_slug: string;
 }
@@ -50,15 +59,16 @@ export interface StatSeries {
 }
 
 export interface CreatorList {
-  id: number;
+  id: string;
   title: string;
   item_count: number;
-  views: number;
+  /** Absent tant qu'il n'y a pas de table d'audience. */
+  views?: number;
   is_public: boolean;
 }
 
 export interface LinkInBioItem {
-  id: number;
+  id: string;
   label: string;
   url: string;
   clicks: number;

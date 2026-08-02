@@ -1,12 +1,16 @@
 # src/lib
 
-Emplacement réservé au futur client Supabase. Vide en phase visuels.
+Accès bas niveau à Supabase.
 
-Ce qui viendra ici :
+- `supabase.ts` : client unique, construit à partir de `VITE_SUPABASE_URL` et
+  `VITE_SUPABASE_ANON_KEY`. Il vaut `null` tant que ces variables manquent, ce
+  qui laisse l'application consultable sans base. La clé `service_role` n'a
+  jamais sa place ici : elle ne doit pas approcher le client.
+- `database.types.ts` : types du schéma, écrits à la main et alignés sur
+  `supabase/migrations/`. À régénérer avec la CLI quand elle sera branchée.
 
-- `supabase.ts` : client, sur un **projet et une base dédiés**. Rien de partagé
-  avec les bases Librist ou Chapytre.
-- `auth.ts` : session, profil, gestion du compte.
+Les fonctions métier ne vivent pas ici mais dans `src/api/`, qui traduit les
+lignes de la base vers les types de l'application.
 
-La couche de goût et de recommandation (profil de goût, Wikidata, MovieLens) vit
-ici aussi, séparée du client TMDB de `src/api/`.
+Le projet Supabase est **dédié à Seancly**. Rien n'est partagé avec les bases
+Librist ou Chapytre.

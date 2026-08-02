@@ -1,18 +1,31 @@
 # src/api
 
-Emplacement réservé au futur client TMDB. Vide en phase visuels.
+Couche d'accès aux données. Chaque fonction renvoie les **types de
+l'application** (`CreatorProfile`, `CreatorList`, `LinkInBioItem`...), jamais des
+lignes brutes : les composants ne savent pas d'où viennent leurs données.
 
-Ce qui viendra ici :
+| Fichier | Rôle |
+| --- | --- |
+| `client.ts` | `DataError` et déballage des réponses PostgREST, avec des messages déjà rédigés |
+| `profiles.ts` | profil du compte et profils publics |
+| `lists.ts` | listes et contenu des listes |
+| `links.ts` | liens de la page créateur, et comptage des clics |
+| `ratings.ts` | notes en demi-étoiles |
+| `follows.ts` | abonnements et compteurs |
 
-- `tmdb.ts` : client HTTP (clé côté serveur, jamais dans le bundle), mapping des
-  réponses vers `src/types/tmdb.ts`.
-- `images.ts` : construction des URLs d'affiches
-  (`https://image.tmdb.org/t/p/w500${poster_path}`).
+Le client Supabase lui-même vit dans `src/lib/`.
 
-Deux contraintes à ne pas perdre de vue :
+## Ce qui reste à venir ici
 
-- L'attribution TMDB (logo et mention) est obligatoire dès qu'on affiche leurs
-  données. L'emplacement est déjà prévu dans le pied de page de l'accueil.
-- TMDB exige un accord commercial dès la monétisation et interdit l'usage adossé
-  à une application d'IA. La recommandation (horoscope ciné, matchbook) doit donc
-  s'appuyer sur une couche de données séparée, pas sur ce client.
+Le client TMDB, quand l'accord commercial sera signé : `tmdb.ts` pour les
+appels, et le mapping vers `src/types/tmdb.ts`. Deux contraintes à ne pas perdre
+de vue à ce moment-là :
+
+- L'attribution TMDB, logo compris, est obligatoire dès qu'on affiche leurs
+  données. L'emplacement est déjà prévu dans le pied de page.
+- TMDB interdit l'usage adossé à une application d'IA. La recommandation
+  (horoscope ciné, matchbook) devra s'appuyer sur une couche séparée, jamais sur
+  ce client.
+
+En attendant, les films restent lus depuis `src/data/titles.ts`, et `title_ref`
+désigne ces identifiants mockés.

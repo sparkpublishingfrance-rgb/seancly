@@ -4,6 +4,7 @@ import { EmptyState } from "./components/EmptyState";
 import { FilmDetail } from "./components/FilmDetail";
 import { Home } from "./components/Home";
 import { Layout } from "./components/Layout";
+import { SignIn } from "./components/SignIn";
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/film/:id", element: <FilmDetail /> },
       { path: "/studio", element: <CreatorStudio /> },
+      { path: "/connexion", element: <SignIn /> },
       {
         path: "*",
         element: (

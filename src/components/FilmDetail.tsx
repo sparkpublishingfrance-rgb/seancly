@@ -14,7 +14,8 @@ import {
   WatchProviders,
 } from "./FilmSections";
 import { Rail } from "./Rail";
-import { IconArrowLeft, IconGuild, IconPen, IconPlay, IconPlus, IconStar } from "./icons";
+import { RateControl } from "./RateControl";
+import { IconArrowLeft, IconGuild, IconPlay, IconPlus, IconStar } from "./icons";
 
 /** Formate une durée en minutes vers "2 h 08". */
 function formatRuntime(minutes: number): string {
@@ -135,10 +136,7 @@ function FilmHero({ title }: FilmHeroProps) {
             <IconPlus />
             Ma liste
           </button>
-          <button type="button" className="btn btn--ghost">
-            <IconPen />
-            Noter
-          </button>
+          <RateControl titleRef={String(title.id)} titleName={title.title} />
           <button type="button" className="btn btn--ghost">
             <IconGuild />
             Ajouter à une guilde
