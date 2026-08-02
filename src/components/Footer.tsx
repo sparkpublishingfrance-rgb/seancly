@@ -54,7 +54,7 @@ export function Footer() {
             Produit
           </h2>
           <ul className="foot__list">
-            {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.filter((item) => !item.requiresAuth || signedIn).map((item) => (
               <li key={item.label}>
                 {item.to ? (
                   <Link className="foot__link" to={item.to}>

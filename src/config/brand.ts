@@ -30,8 +30,14 @@ export const BRAND = {
  * Tout ce qui appartient au membre passe par le menu de l'avatar, pas par ici.
  * `to` vaut `null` tant que l'écran n'existe pas.
  */
-export const NAV_ITEMS: { label: string; to: string | null }[] = [
+export const NAV_ITEMS: {
+  label: string;
+  to: string | null;
+  /** Masquée tant que personne n'est connecté. */
+  requiresAuth?: boolean;
+}[] = [
   { label: "Accueil", to: "/" },
+  { label: "Fil", to: "/fil", requiresAuth: true },
   { label: "Films", to: null },
   { label: "Séries", to: null },
   { label: "Guildes", to: null },

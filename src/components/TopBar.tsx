@@ -37,7 +37,7 @@ export function TopBar() {
         </Link>
 
         <nav className="topbar__nav" aria-label="Navigation principale">
-          <NavLinks pathname={pathname} />
+          <NavLinks pathname={pathname} signedIn={signedIn} />
         </nav>
 
         <div className="topbar__spacer" />
@@ -77,18 +77,21 @@ export function TopBar() {
       {/* Sous 720px, la navigation principale se replie ici. */}
       {menuOpen && (
         <nav className="topbar__mobile" id="nav-mobile" aria-label="Navigation principale">
-          <NavLinks pathname={pathname} />
+          <NavLinks pathname={pathname} signedIn={signedIn} />
         </nav>
       )}
     </header>
   );
 }
 
-/** Entrées de découverte. Celles sans route restent inertes en attendant l'écran. */
-function NavLinks({ pathname }: { pathname: string }) {
+/**
+ * Entrées de navigation. Celles sans route restent inertes en attendant leur
+ * écran, celles qui exigent un compte disparaissent tant qu'on n'est pas connecté.
+ */
+function NavLinks({ pathname, signedIn }: { pathname: string; signedIn: boolean }) {
   return (
     <>
-      {NAV_ITEMS.map((item) =>
+      {NAV_ITEMS.filter((item) => !item.requiresAuth || signedIn).map((item) =>
         item.to ? (
           <Link
             key={item.label}

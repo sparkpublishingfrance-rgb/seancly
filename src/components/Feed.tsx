@@ -5,19 +5,78 @@ import type { CreatorProfile } from "../types/studio";
 import { messageOf } from "../api/client";
 import { getFeed } from "../api/feed";
 import { creatorAvatarGradient } from "../config/theme";
+import { useAuth } from "../context/auth-context";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { formatRelativeTime, formatScore } from "../utils/format";
 import { Notice, Spinner } from "./StateMessage";
 
-type SpaceFeedProps = {
+/**
+ * Page du fil, à sa propre adresse.
+ *
+ * C'est une destination de retour quotidien : elle mérite mieux que deux clics
+ * dans un onglet d'espace personnel. La page reste privée, l'accueil public.
+ */
+export function Feed() {
+  useDocumentTitle("Fil");
+
+  const { status, profile } = useAuth();
+
+  if (status === "unconfigured") {
+    return (
+      <main className="shell empty">
+        <h1 className="empty__title">Fil hors ligne</h1>
+        <p className="empty__body">
+          La base n'est pas encore reliée à cette installation, donc ton fil n'a rien
+          à afficher.
+        </p>
+        <Link className="btn btn--ghost" to="/">
+          Retour à l'accueil
+        </Link>
+      </main>
+    );
+  }
+
+  if (status === "signed-out") {
+    return (
+      <main className="shell empty">
+        <h1 className="empty__title">Connecte-toi</h1>
+        <p className="empty__body">
+          Ton fil réunit ce qu'ont fait les membres que tu suis. Il te faut un compte
+          pour l'ouvrir.
+        </p>
+        <Link className="btn btn--primary" to="/connexion?retour=%2Ffil">
+          Se connecter
+        </Link>
+      </main>
+    );
+  }
+
+  if (status === "loading" || !profile) {
+    return (
+      <main className="shell feed-page">
+        <Spinner label="Nous chargeons ton fil" />
+      </main>
+    );
+  }
+
+  return (
+    <main className="shell feed-page">
+      <h1 className="feed-page__title">Ton fil</h1>
+      <FeedList viewer={profile} />
+    </main>
+  );
+}
+
+type FeedListProps = {
   viewer: CreatorProfile;
 };
 
 /**
- * Fil d'activité des abonnements.
- * Il lit `activity`, qui est matérialisée par des triggers : aucun assemblage
- * de jointures au chargement.
+ * Liste des événements.
+ * Elle lit `activity`, matérialisée par des triggers : aucun assemblage de
+ * jointures au chargement.
  */
-export function SpaceFeed({ viewer }: SpaceFeedProps) {
+function FeedList({ viewer }: FeedListProps) {
   const [events, setEvents] = useState<FeedEvent[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [following, setFollowing] = useState(0);
@@ -60,11 +119,7 @@ export function SpaceFeed({ viewer }: SpaceFeedProps) {
   }
 
   return (
-    <div className="studio-panel">
-      <div className="studio-block__head">
-        <h2 className="studio-block__title">Ton fil</h2>
-      </div>
-
+    <>
       {error && <Notice tone="error">{error}</Notice>}
 
       {/* L'invitation à suivre n'a de sens que si le fil s'est bien chargé :
@@ -102,7 +157,7 @@ export function SpaceFeed({ viewer }: SpaceFeedProps) {
           )}
         </>
       )}
-    </div>
+    </>
   );
 }
 

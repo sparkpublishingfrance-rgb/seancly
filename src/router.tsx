@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import { CreatorPublic } from "./components/CreatorPublic";
 import { EmptyState } from "./components/EmptyState";
+import { Feed } from "./components/Feed";
 import { FilmDetail } from "./components/FilmDetail";
 import { Home } from "./components/Home";
 import { Layout } from "./components/Layout";
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/film/:id", element: <FilmDetail /> },
+      { path: "/fil", element: <Feed /> },
       { path: "/mon-espace", element: <MySpace /> },
       // « Studio » est devenu « Mon espace » au lot 6. On garde l'ancienne
       // adresse vivante, elle circule déjà dans des liens.
