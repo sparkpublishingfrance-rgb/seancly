@@ -15,6 +15,8 @@ export type ActivityVerbRow =
   | "created_list"
   | "added_to_list"
   | "followed"
+  | "followed_list"
+  | "commented_list"
   | "joined_guild";
 
 export type ActivityObjectRow = "title" | "list" | "profile" | "guild";
@@ -154,7 +156,7 @@ export interface Database {
           verb: ActivityVerbRow;
           object_type: ActivityObjectRow;
           object_ref: string;
-          metadata: { rating?: number; title?: string } | null;
+          metadata: { rating?: number; title?: string; excerpt?: string } | null;
           visibility: ActivityVisibilityRow;
           created_at: string;
         };
@@ -162,6 +164,34 @@ export interface Database {
         Insert: never;
         Update: never;
         Relationships: [{ foreignKeyName: "activity_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
+      list_follows: {
+        Row: { follower_id: string; list_id: string; created_at: string };
+        Insert: { follower_id: string; list_id: string };
+        Update: Record<string, never>;
+        Relationships: [
+          { foreignKeyName: "list_follows_follower_id_fkey"; columns: ["follower_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "list_follows_list_id_fkey"; columns: ["list_id"]; isOneToOne: false; referencedRelation: "lists"; referencedColumns: ["id"] },
+        ];
+      };
+      list_comments: {
+        Row: {
+          id: string;
+          list_id: string;
+          author_id: string;
+          body: string;
+          created_at: string;
+          updated_at: string;
+          deleted_at: string | null;
+          deleted_by: string | null;
+        };
+        Insert: { id?: string; list_id: string; author_id: string; body: string };
+        // Seul le texte est modifiable ; les retraits passent par une fonction.
+        Update: { body?: string };
+        Relationships: [
+          { foreignKeyName: "list_comments_list_id_fkey"; columns: ["list_id"]; isOneToOne: false; referencedRelation: "lists"; referencedColumns: ["id"] },
+          { foreignKeyName: "list_comments_author_id_fkey"; columns: ["author_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
       };
       link_in_bio_items: {
         Row: {
@@ -200,11 +230,40 @@ export interface Database {
         };
         Relationships: [];
       };
+      list_stats: {
+        Row: {
+          list_id: string;
+          items: number;
+          followers: number;
+          comments: number;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       register_link_click: {
         Args: { target_link: string };
         Returns: undefined;
+      };
+      delete_my_list_comment: {
+        Args: { comment_id: string };
+        Returns: undefined;
+      };
+      hide_list_comment: {
+        Args: { comment_id: string };
+        Returns: undefined;
+      };
+      popular_lists: {
+        Args: { window_days?: number; max_rows?: number };
+        Returns: {
+          list_id: string;
+          title: string;
+          owner_id: string;
+          items: number;
+          followers: number;
+          comments: number;
+          score: number;
+        }[];
       };
     };
     Enums: {

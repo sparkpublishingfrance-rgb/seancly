@@ -3177,6 +3177,314 @@ a.feed__object:hover {
   margin-top: 14px;
 }
 
+.feed__excerpt {
+  display: block;
+  margin-top: 4px;
+  color: #c6c0cc;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ======================================================================
+   Page d'une liste
+   ====================================================================== */
+
+.listpage {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  max-width: 900px;
+  padding-block: 36px 76px;
+}
+
+.listhead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 26px 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, rgba(192, 56, 106, 0.16) 0%, var(--surface) 52%);
+}
+
+.listhead__kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.listhead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.6vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.listhead__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 0.18s ease;
+}
+
+.listhead__author:hover {
+  color: var(--raspberry);
+}
+
+.listhead__avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #16161c;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.listhead__stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.listhead__stats strong {
+  color: var(--text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.listhead__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.listpage__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listpage__grid .poster {
+  width: 100%;
+}
+
+/* Tuile de liste, pour les rangées de découverte. */
+.listtile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 232px;
+  height: 100%;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.listtile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(192, 56, 106, 0.6);
+}
+
+.listtile__title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.listtile__author {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.listtile__avatar {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #16161c;
+  font-size: 9.5px;
+  font-weight: 800;
+}
+
+.listtile__stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.listtile__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.listcard__link {
+  transition: color 0.18s ease;
+}
+
+.listcard__link:hover {
+  color: var(--raspberry);
+}
+
+/* --------------------------------------------------------- commentaires */
+
+.comments__title {
+  margin: 0 0 16px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.comments__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.comments__input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.comments__input:focus {
+  border-color: #3b3b47;
+  outline: none;
+}
+
+.comments__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.comments__count {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.comments__actions .btn {
+  margin-left: auto;
+}
+
+.comments__signin {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.comments__signin a {
+  color: var(--raspberry);
+  font-weight: 700;
+}
+
+.comments__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.comment__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #16161c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.comment__body {
+  min-width: 0;
+}
+
+.comment__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 5px;
+}
+
+.comment__author {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.comment__author:hover {
+  color: var(--raspberry);
+}
+
+.comment__time,
+.comment__edited {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.comment__text {
+  margin: 0;
+  color: #c6c0cc;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
 /* --------------------------------------------- bande guilde, en découverte */
 
 .guild__kicker {
@@ -3379,6 +3687,27 @@ a.feed__object:hover {
   .feed__time {
     grid-column: 2;
     grid-row: 2;
+  }
+
+  .listhead {
+    padding: 22px 18px;
+  }
+
+  .listpage__grid {
+    grid-template-columns: repeat(auto-fill, minmax(134px, 1fr));
+    gap: 12px;
+  }
+
+  .listtile {
+    width: 196px;
+  }
+
+  .comment {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .comment .iconbtn {
+    grid-column: 2;
   }
 }
 

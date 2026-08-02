@@ -5,6 +5,7 @@ import { Feed } from "./components/Feed";
 import { FilmDetail } from "./components/FilmDetail";
 import { Home } from "./components/Home";
 import { Layout } from "./components/Layout";
+import { ListDetail } from "./components/ListDetail";
 import { LegalPage } from "./components/LegalPage";
 import { MySpace } from "./components/MySpace";
 import { SignIn } from "./components/SignIn";
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/film/:id", element: <FilmDetail /> },
       { path: "/actualite", element: <Feed /> },
+      { path: "/liste/:id", element: <ListDetail /> },
       { path: "/mon-espace", element: <MySpace /> },
       // « Studio » est devenu « Mon espace » au lot 6. On garde l'ancienne
       // adresse vivante, elle circule déjà dans des liens.

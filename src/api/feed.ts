@@ -26,6 +26,9 @@ export type FeedEvent = {
   titleRef?: string;
   /** Nom de la liste au moment de l'événement, lu dans `metadata`. */
   listTitle?: string;
+  listId?: string;
+  /** Début du commentaire, pour `commented_list`. */
+  excerpt?: string;
   /** Profil concerné, pour `followed`. */
   target?: FeedProfile;
 };
@@ -152,6 +155,8 @@ export async function getFeed(
       title:
         row.object_type === "title" ? titleById(Number(row.object_ref)) : undefined,
       listTitle: row.object_type === "list" ? row.metadata?.title : undefined,
+      listId: row.object_type === "list" ? row.object_ref : undefined,
+      excerpt: row.metadata?.excerpt,
       target: row.object_type === "profile" ? profiles.get(row.object_ref) : undefined,
     });
   }

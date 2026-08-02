@@ -3,6 +3,7 @@ import { FEATURED, HOME_RAILS } from "../data/titles";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { GuildStrip } from "./Community";
 import { Hero } from "./Hero";
+import { PopularLists } from "./PopularLists";
 import { Rail } from "./Rail";
 
 /**
@@ -21,7 +22,13 @@ export function Home() {
       <div className="rows">
         <GuildStrip guild={LIVE_GUILD} />
 
-        {HOME_RAILS.map((rail) => (
+        {HOME_RAILS.slice(0, 1).map((rail) => (
+          <Rail rail={rail} key={rail.title} />
+        ))}
+
+        <PopularLists />
+
+        {HOME_RAILS.slice(1).map((rail) => (
           <Rail rail={rail} key={rail.title} />
         ))}
       </div>

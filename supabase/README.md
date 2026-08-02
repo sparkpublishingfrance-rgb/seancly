@@ -17,6 +17,10 @@ l'ordre des noms de fichiers. Chaque fichier est relu avant exécution.
 | 5 | `20260802000005_link_in_bio.sql` | `link_in_bio_items`, `register_link_click` |
 | 6 | `20260802000006_public_profile_columns.sql` | lecture d'`anon` limitée aux colonnes publiques de `profiles` |
 | 7 | `20260802000007_activity.sql` | `activity`, ses policies de lecture, et les triggers qui l'alimentent |
+| 8 | `20260802000008_activity_read_scope.sql` | resserrement de la lecture d'`activity` |
+| 9 | `20260802000009_activity_community_scope.sql` | lecture d'`activity` ouverte aux membres connectés, `anon` exclu |
+| 10 | `20260803000010_activity_verbs_lists.sql` | deux verbes de plus, **à exécuter seule** |
+| 11 | `20260803000011_list_social.sql` | `list_follows`, `list_comments`, `list_stats`, `popular_lists`, triggers |
 
 `films_catalog` et tout ce qui dépend de TMDB arrivent dans un lot ultérieur,
 une fois l'accord commercial signé. En attendant, `title_ref` reste du texte
@@ -75,6 +79,12 @@ client.
 | A crée une liste privée | aucun événement |
 | A rend cette liste publique | un événement `created_list` apparaît |
 | A se désabonne de B | l'événement `followed` disparaît |
+| A suit une liste privée de B | refus |
+| A commente une liste privée de B | refus |
+| A modifie le commentaire de B | zéro ligne affectée |
+| B masque un commentaire sur sa liste | retiré, texte inchangé |
+| A masque un commentaire sur la liste de B | sans effet |
+| anon lit les commentaires d'une liste privée | zéro ligne |
 
 Le résultat de ce passage est à consigner dans le message de commit qui active
 la base, conformément au standard.
