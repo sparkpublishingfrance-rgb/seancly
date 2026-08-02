@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { CreatorProfile, LinkInBioItem } from "../types/studio";
 import { LINK_SUGGESTIONS } from "../data/studio";
-import { BRAND } from "../config/brand";
 import { messageOf } from "../api/client";
+import { CreatorShowcase } from "./CreatorShowcase";
 import {
   createLinkInBioItem,
   deleteLinkInBioItem,
@@ -230,30 +231,26 @@ export function StudioLinks({ creator }: StudioLinksProps) {
       <aside className="links__preview" aria-label="Aperçu de ta page publique">
         <p className="links__preview-label">Ce que voient tes abonnés</p>
 
-        <div className="preview">
-          <span className="preview__avatar" aria-hidden="true">
-            {creator.initials}
-          </span>
-          <p className="preview__name">{creator.display_name}</p>
-          <p className="preview__handle">{creator.handle}</p>
-          {creator.bio && <p className="preview__bio">{creator.bio}</p>}
+        {/* Même composant que la vraie vitrine : ce qui est réglé ici est
+            exactement ce qui s'affichera sur /@slug. */}
+        <CreatorShowcase
+          variant="preview"
+          profile={{
+            display_name: creator.display_name,
+            handle: creator.handle,
+            initials: creator.initials,
+            bio: creator.bio,
+            slug: creator.link_in_bio_slug,
+            avatar_color: creator.avatar_color,
+            verified: creator.verified,
+          }}
+          links={visible}
+          emptyLabel="Aucun lien actif pour le moment."
+        />
 
-          {visible.length === 0 ? (
-            <p className="preview__empty">Aucun lien actif pour le moment.</p>
-          ) : (
-            <ul className="preview__links">
-              {visible.map((link) => (
-                <li className="preview__link" key={link.id}>
-                  {link.label}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <p className="preview__foot">
-            {BRAND.public_domain}/@{creator.link_in_bio_slug}
-          </p>
-        </div>
+        <Link className="links__preview-open" to={`/@${creator.link_in_bio_slug}`}>
+          Ouvrir ma page publique
+        </Link>
       </aside>
     </div>
   );

@@ -50,6 +50,31 @@ export async function getRatingsForTitle(titleRef: string): Promise<TitleRating[
   }));
 }
 
+export type AuthoredRating = {
+  titleRef: string;
+  rating: number;
+  body: string | null;
+};
+
+/** Dernières notes d'un créateur, pour l'activité de sa vitrine. */
+export async function getRecentRatingsByAuthor(
+  authorId: string,
+  limit = 8,
+): Promise<AuthoredRating[]> {
+  const result = await requireSupabase()
+    .from("ratings")
+    .select("title_ref, rating, body")
+    .eq("author_id", authorId)
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  return unwrap(result, "charger l'activité de ce créateur").map((row) => ({
+    titleRef: row.title_ref,
+    rating: row.rating,
+    body: row.body,
+  }));
+}
+
 /**
  * Pose ou remplace sa note sur un titre.
  * La contrainte d'unicité `(author_id, title_ref)` fait de `upsert` une mise à

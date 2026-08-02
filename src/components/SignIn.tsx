@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { BRAND } from "../config/brand";
 import { useAuth } from "../context/auth-context";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
@@ -11,11 +11,14 @@ export function SignIn() {
   useDocumentTitle("Connexion");
 
   const { status, signInWithEmail } = useAuth();
+  const [params] = useSearchParams();
   const [email, setEmail] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  if (status === "signed-in") return <Navigate to="/studio" replace />;
+  const back = safeReturnPath(params.get("retour"));
+
+  if (status === "signed-in") return <Navigate to={back ?? "/studio"} replace />;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -23,7 +26,7 @@ export function SignIn() {
     setPhase("sending");
 
     try {
-      await signInWithEmail(email.trim());
+      await signInWithEmail(email.trim(), back ?? undefined);
       setPhase("sent");
     } catch (cause) {
       setPhase("idle");
@@ -118,4 +121,14 @@ export function SignIn() {
       </p>
     </main>
   );
+}
+
+/**
+ * Ne garde un chemin de retour que s'il reste interne au site.
+ * Une URL absolue ou protocole-relative servirait de redirection ouverte.
+ */
+function safeReturnPath(value: string | null): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
 }

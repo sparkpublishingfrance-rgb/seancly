@@ -55,6 +55,15 @@ export function backdropGradient(spine: string): string {
   ].join(", ");
 }
 
+/**
+ * Avatar de la vitrine créateur : la teinte du profil glisse vers l'or.
+ * Avec la teinte par défaut, on retrouve exactement le framboise vers or de la
+ * marque.
+ */
+export function creatorAvatarGradient(tint: string): string {
+  return `linear-gradient(140deg, ${tint} 0%, ${COLORS.gold} 100%)`;
+}
+
 /** Pastille ronde des membres et du casting, déclinée à partir d'une teinte. */
 export function avatarGradient(tint: string): string {
   return `linear-gradient(140deg, ${tint} 0%, ${COLORS.surface2} 100%)`;

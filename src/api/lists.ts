@@ -35,6 +35,19 @@ export async function getMyLists(ownerId: string): Promise<CreatorList[]> {
   return unwrap(result, "charger tes listes").map(toCreatorList);
 }
 
+/** Listes publiques d'un créateur, telles que sa vitrine les montre. */
+export async function getPublicLists(ownerId: string): Promise<CreatorList[]> {
+  const result = await requireSupabase()
+    .from("lists")
+    .select(LIST_SELECT)
+    .eq("owner_id", ownerId)
+    .eq("is_public", true)
+    .order("created_at", { ascending: false })
+    .returns<ListRowWithCount[]>();
+
+  return unwrap(result, "charger les listes de ce créateur").map(toCreatorList);
+}
+
 export async function createList(
   ownerId: string,
   title: string,

@@ -38,6 +38,29 @@ export async function getLinkInBioItems(ownerId: string): Promise<LinkInBioItem[
   return unwrap(result, "charger tes liens").map(toLinkItem);
 }
 
+/** Ce que la vitrine publique montre d'un lien. Jamais le compteur de clics. */
+export type PublicLink = {
+  id: string;
+  label: string;
+  url: string;
+};
+
+/**
+ * Liens affichés sur la vitrine d'un créateur.
+ * Le filtre sur `enabled` est explicite : la RLS le garantit déjà pour un
+ * visiteur, mais pas pour le créateur qui regarde sa propre page.
+ */
+export async function getPublicLinks(ownerId: string): Promise<PublicLink[]> {
+  const result = await requireSupabase()
+    .from("link_in_bio_items")
+    .select("id, label, url")
+    .eq("owner_id", ownerId)
+    .eq("enabled", true)
+    .order("position", { ascending: true });
+
+  return unwrap(result, "charger les liens de ce créateur");
+}
+
 export async function createLinkInBioItem(
   ownerId: string,
   input: { label: string; url: string; position: number; enabled?: boolean },

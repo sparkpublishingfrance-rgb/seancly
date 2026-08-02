@@ -61,12 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [loadProfile]);
 
-  const signInWithEmail = useCallback(async (email: string) => {
+  const signInWithEmail = useCallback(async (email: string, redirectPath?: string) => {
     if (!supabase) throw new Error("La base n'est pas encore configurée.");
 
     const { error: authError } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin },
+      options: {
+        emailRedirectTo: `${window.location.origin}${redirectPath ?? "/"}`,
+      },
     });
 
     if (authError) throw new Error(authError.message);

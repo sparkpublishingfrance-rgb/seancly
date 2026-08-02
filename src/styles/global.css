@@ -1998,7 +1998,12 @@ a {
   outline: none;
 }
 
-/* Aperçu de la vitrine publique, construite pour de bon au lot suivant. */
+/* -------------------------------------------------- vitrine « lien en bio »
+
+   Une seule mise en forme pour l'aperçu du studio et la page publique.
+   `--showcase-gap` et les tailles varient selon la variante ; le reste est
+   commun, pour que l'aperçu ne mente jamais sur le rendu réel.
+   -------------------------------------------------------------------------- */
 
 .links__preview-label {
   margin: 0 0 10px;
@@ -2009,80 +2014,272 @@ a {
   text-transform: uppercase;
 }
 
-.preview {
+.links__preview-open {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--raspberry);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.links__preview-open:hover {
+  text-decoration: underline;
+}
+
+.showcase {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 26px 20px 20px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(192, 56, 106, 0.16) 0%, var(--surface) 48%);
   text-align: center;
 }
 
-.preview__avatar {
+.showcase--preview {
+  padding: 26px 20px 20px;
+}
+
+.showcase--public {
+  padding: 34px 24px 26px;
+}
+
+.showcase__avatar {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
   border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  font-size: 19px;
+  color: #16161c;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
 
-.preview__name {
-  margin: 10px 0 0;
-  font-size: 16px;
+.showcase--preview .showcase__avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 19px;
+}
+
+.showcase--public .showcase__avatar {
+  width: 92px;
+  height: 92px;
+  font-size: 27px;
+  box-shadow: 0 18px 42px -18px rgba(192, 56, 106, 0.9);
+}
+
+.showcase__name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 12px 0 0;
   font-weight: 800;
 }
 
-.preview__handle {
+.showcase--preview .showcase__name {
+  font-size: 16px;
+}
+
+.showcase--public .showcase__name {
+  font-size: 22px;
+}
+
+.showcase__verified {
+  display: inline-flex;
+  color: var(--gold);
+}
+
+.showcase__handle {
   margin: 0;
   color: var(--muted);
   font-size: 12.5px;
 }
 
-.preview__bio {
-  margin: 10px 0 2px;
+.showcase__bio {
+  margin: 12px 0 2px;
+  max-width: 46ch;
   color: #c6c0cc;
-  font-size: 12.5px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
-.preview__links {
+.showcase--preview .showcase__bio {
+  font-size: 12.5px;
+}
+
+.showcase--public .showcase__bio {
+  font-size: 14px;
+}
+
+.showcase__links {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
-  margin: 10px 0 0;
+  margin: 14px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.preview__link {
-  padding: 11px 12px;
+.showcase--public .showcase__links {
+  gap: 12px;
+  max-width: 460px;
+}
+
+.showcase__link {
+  display: block;
   border-radius: 10px;
   border: 1px solid rgba(244, 241, 244, 0.14);
   background: rgba(11, 11, 15, 0.5);
-  font-size: 13px;
   font-weight: 700;
+  transition: transform 0.16s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 
-.preview__empty {
-  margin: 12px 0;
+.showcase--preview .showcase__link {
+  padding: 11px 12px;
+  font-size: 13px;
+}
+
+/* Cible tactile large : cette page s'ouvre surtout depuis un téléphone. */
+.showcase--public .showcase__link {
+  padding: 17px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.showcase--public .showcase__link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(192, 56, 106, 0.6);
+  background: rgba(31, 31, 39, 0.85);
+}
+
+.showcase__empty {
+  margin: 14px 0 0;
   color: var(--muted);
   font-size: 12.5px;
 }
 
-.preview__foot {
-  margin: 16px 0 0;
+.showcase__foot {
+  margin: 18px 0 0;
   color: var(--muted);
   font-size: 11px;
   letter-spacing: 0.04em;
+}
+
+/* ----------------------------------------------------- page créateur */
+
+.creator {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  max-width: 720px;
+  padding-block: 34px 72px;
+}
+
+.creator__owner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  background: rgba(201, 162, 75, 0.08);
+  color: var(--gold);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.creator__owner .btn {
+  margin-left: auto;
+}
+
+.creator__counts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 4px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.creator__counts strong {
+  color: var(--text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.creator__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* Le bouton d'abonnement respire, c'est l'action principale de la page. */
+.showcase--public .btn--block {
+  max-width: 460px;
+  margin-top: 8px;
+}
+
+.creator__section-title {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.activity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.activity__link {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.activity__link:hover .activity__title {
+  color: var(--raspberry);
+}
+
+.activity__title {
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 0.18s ease;
+}
+
+.activity__year {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.activity__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------------------------------------------------------------- listes */

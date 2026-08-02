@@ -15,7 +15,7 @@ export type AuthValue = {
   profile: CreatorProfile | null;
   /** Message d'erreur affichable, déjà rédigé dans la voix de l'application. */
   error: string | null;
-  signInWithEmail: (email: string) => Promise<void>;
+  signInWithEmail: (email: string, redirectPath?: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 };

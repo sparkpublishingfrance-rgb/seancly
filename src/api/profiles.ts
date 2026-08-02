@@ -35,16 +35,66 @@ export async function getProfile(id: string): Promise<CreatorProfile | null> {
   return data ? toCreatorProfile(data) : null;
 }
 
-/** Profil public par son handle, sans arobase. Sert la vitrine créateur. */
-export async function getProfileByHandle(handle: string): Promise<CreatorProfile | null> {
-  const { data, error } = await requireSupabase()
+/**
+ * Profil tel que la vitrine publique le montre.
+ * Ni `plan` ni `is_creator` : ces colonnes ne sont pas accordées à `anon`.
+ */
+export type PublicCreator = {
+  id: string;
+  /** Avec l'arobase, comme dans l'interface. */
+  handle: string;
+  /** Sans l'arobase, tel qu'il apparaît dans l'URL. */
+  slug: string;
+  display_name: string;
+  initials: string;
+  bio: string;
+  avatar_color: string;
+  verified: boolean;
+  followers: number;
+  public_lists: number;
+};
+
+const PUBLIC_COLUMNS = "id, handle, display_name, bio, avatar_color, verified";
+
+/**
+ * Vitrine d'un créateur, à partir du slug de l'URL.
+ * Renvoie `null` si le slug ne correspond à personne, ce que la page traduit en
+ * message plutôt qu'en erreur.
+ */
+export async function getPublicProfileBySlug(slug: string): Promise<PublicCreator | null> {
+  const client = requireSupabase();
+
+  const { data, error } = await client
     .from("profiles")
-    .select("*")
-    .eq("handle", handle)
+    .select(PUBLIC_COLUMNS)
+    .eq("handle", slug)
     .maybeSingle();
 
   if (error) throw new DataError("Nous n'avons pas réussi à charger ce profil.", error);
-  return data ? toCreatorProfile(data) : null;
+  if (!data) return null;
+
+  // Agrégats publics. Un échec ici ne doit pas emporter la page entière.
+  const [counts, lists] = await Promise.all([
+    client.from("follow_counts").select("followers").eq("profile_id", data.id).maybeSingle(),
+    client
+      .from("lists")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", data.id)
+      .eq("is_public", true),
+  ]);
+
+  return {
+    id: data.id,
+    handle: `@${data.handle}`,
+    slug: data.handle,
+    display_name: data.display_name,
+    initials: initialsOf(data.display_name),
+    bio: data.bio ?? "",
+    avatar_color: data.avatar_color,
+    verified: data.verified,
+    followers: counts.data?.followers ?? 0,
+    public_lists: lists.count ?? 0,
+  };
 }
 
 export type ProfilePatch = {
