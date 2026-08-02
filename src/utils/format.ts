@@ -32,6 +32,31 @@ export function formatMonthYear(isoDate: string): string {
   return MONTH_YEAR.format(date);
 }
 
+const RELATIVE = new Intl.RelativeTimeFormat("fr-FR", { numeric: "auto" });
+
+/** Paliers de l'horodatage relatif, du plus fin au plus large. */
+const RELATIVE_STEPS: [Intl.RelativeTimeFormatUnit, number][] = [
+  ["second", 60],
+  ["minute", 60],
+  ["hour", 24],
+  ["day", 7],
+  ["week", 4.35],
+  ["month", 12],
+  ["year", Number.POSITIVE_INFINITY],
+];
+
+/** Horodatage relatif en français ("il y a 2 heures", "hier"). */
+export function formatRelativeTime(isoDate: string, now = Date.now()): string {
+  let delta = (new Date(isoDate).getTime() - now) / 1000;
+
+  for (const [unit, span] of RELATIVE_STEPS) {
+    if (Math.abs(delta) < span) return RELATIVE.format(Math.round(delta), unit);
+    delta /= span;
+  }
+
+  return RELATIVE.format(Math.round(delta), "year");
+}
+
 /** Initiales d'un nom complet, deux lettres au maximum. */
 export function initialsOf(name: string): string {
   return (

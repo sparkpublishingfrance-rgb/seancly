@@ -6,6 +6,7 @@ import { BRAND } from "../config/brand";
 import { useAuth } from "../context/auth-context";
 import { formatMonthYear } from "../utils/format";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { SpaceFeed } from "./SpaceFeed";
 import { BecomeCreatorCard, SpaceForMe, SpaceQuests } from "./SpacePanels";
 import { Spinner } from "./StateMessage";
 import { StudioLinks } from "./StudioLinks";
@@ -20,6 +21,7 @@ import { IconCopy, IconExternal, IconVerified } from "./icons";
  */
 const TABS = [
   { id: "forme", label: "Pour moi", creatorOnly: false },
+  { id: "feed", label: "Fil", creatorOnly: false },
   { id: "quests", label: "Quêtes", creatorOnly: false },
   { id: "lists", label: "Mes listes", creatorOnly: false },
   { id: "stats", label: "Statistiques", creatorOnly: true },
@@ -214,6 +216,7 @@ function SpaceTabs({ creator }: { creator: CreatorProfile }) {
             {!creator.is_creator && <BecomeCreatorCard />}
           </>
         )}
+        {active === "feed" && <SpaceFeed viewer={creator} />}
         {active === "quests" && <SpaceQuests />}
         {active === "lists" && <StudioLists creator={creator} />}
         {active === "stats" && <StudioOverview stats={CREATOR_STATS} />}

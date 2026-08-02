@@ -9,6 +9,18 @@
 
 export type CreatorPlanRow = "free" | "pro" | "cine_plus";
 
+export type ActivityVerbRow =
+  | "rated"
+  | "reviewed"
+  | "created_list"
+  | "added_to_list"
+  | "followed"
+  | "joined_guild";
+
+export type ActivityObjectRow = "title" | "list" | "profile" | "guild";
+
+export type ActivityVisibilityRow = "public" | "followers";
+
 export interface Database {
   public: {
     Tables: {
@@ -135,6 +147,22 @@ export interface Database {
         };
         Relationships: [{ foreignKeyName: "ratings_author_id_fkey"; columns: ["author_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
       };
+      activity: {
+        Row: {
+          id: string;
+          actor_id: string;
+          verb: ActivityVerbRow;
+          object_type: ActivityObjectRow;
+          object_ref: string;
+          metadata: { rating?: number; title?: string } | null;
+          visibility: ActivityVisibilityRow;
+          created_at: string;
+        };
+        // Aucune écriture cliente : les lignes naissent des triggers.
+        Insert: never;
+        Update: never;
+        Relationships: [{ foreignKeyName: "activity_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }];
+      };
       link_in_bio_items: {
         Row: {
           id: string;
@@ -181,6 +209,9 @@ export interface Database {
     };
     Enums: {
       creator_plan: CreatorPlanRow;
+      activity_verb: ActivityVerbRow;
+      activity_object: ActivityObjectRow;
+      activity_visibility: ActivityVisibilityRow;
     };
   };
 }

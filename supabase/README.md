@@ -15,6 +15,8 @@ l'ordre des noms de fichiers. Chaque fichier est relu avant exécution.
 | 3 | `20260802000003_follows.sql` | `follows`, vue `follow_counts` |
 | 4 | `20260802000004_ratings.sql` | `ratings` |
 | 5 | `20260802000005_link_in_bio.sql` | `link_in_bio_items`, `register_link_click` |
+| 6 | `20260802000006_public_profile_columns.sql` | lecture d'`anon` limitée aux colonnes publiques de `profiles` |
+| 7 | `20260802000007_activity.sql` | `activity`, ses policies de lecture, et les triggers qui l'alimentent |
 
 `films_catalog` et tout ce qui dépend de TMDB arrivent dans un lot ultérieur,
 une fois l'accord commercial signé. En attendant, `title_ref` reste du texte
@@ -33,7 +35,7 @@ Chaque migration applique les mêmes règles, sans exception :
   (`anon`, `authenticated`) et par opération.
 - Aucune table n'est laissée sans policy.
 
-Deux choix méritent d'être signalés :
+Trois choix méritent d'être signalés :
 
 - **`birth_date` n'est pas dans `profiles`.** Les profils sont lisibles
   publiquement et la RLS filtre des lignes, pas des colonnes. La date de
@@ -42,6 +44,10 @@ Deux choix méritent d'être signalés :
 - **Les clics de liens passent par une fonction.** `register_link_click` est le
   seul chemin d'écriture sur `clicks` ; personne n'a le droit `update` sur cette
   colonne, pas même le propriétaire du lien.
+- **`activity` est en lecture seule pour tout le monde.** Aucun rôle client n'a
+  `insert`, `update` ni `delete` dessus. Les lignes naissent et meurent avec les
+  triggers posés sur `ratings`, `lists`, `list_items` et `follows`, ce qui rend
+  impossible la fabrication d'un faux événement.
 
 ## Vérification manuelle de la RLS
 
@@ -63,6 +69,12 @@ client.
 | A met `is_creator` à vrai sur son profil | refus, colonne non accordée |
 | anon lit `link_in_bio_items` désactivés | zéro ligne |
 | anon appelle `register_link_click` | compteur incrémenté |
+| A insère une ligne dans `activity` | refus |
+| A note un titre | un événement `rated` apparaît |
+| A renote le même titre | toujours un seul événement |
+| A crée une liste privée | aucun événement |
+| A rend cette liste publique | un événement `created_list` apparaît |
+| A se désabonne de B | l'événement `followed` disparaît |
 
 Le résultat de ce passage est à consigner dans le message de commit qui active
 la base, conformément au standard.
