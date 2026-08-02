@@ -2760,7 +2760,8 @@ a {
 
 .foot__grid {
   display: grid;
-  grid-template-columns: 1.7fr repeat(3, minmax(0, 1fr));
+  /* La colonne de marque, puis Produit, Compte, Communauté et Légal. */
+  grid-template-columns: 1.7fr repeat(4, minmax(0, 1fr));
   gap: 28px 32px;
   padding-block: 40px 30px;
 }
@@ -3087,6 +3088,99 @@ a {
   padding-left: 20px;
   color: #c6c0cc;
   font-size: 13.5px;
+}
+
+/* --------------------------------------------------- règles communauté */
+
+.rules {
+  gap: 0;
+}
+
+.rules__updated {
+  margin: 10px 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rules__section {
+  width: 100%;
+  max-width: 68ch;
+  margin-top: 34px;
+}
+
+.rules__heading {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  letter-spacing: 0.01em;
+}
+
+.rules__text {
+  margin: 0 0 12px;
+  color: #c6c0cc;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.rules__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding-left: 20px;
+  color: #c6c0cc;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.rules__lead {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.rules__mail {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(212 175 55 / 0.4);
+}
+
+.rules__mail:hover {
+  border-bottom-color: var(--gold);
+}
+
+.rules__related {
+  width: 100%;
+  max-width: 68ch;
+  margin: 44px 0 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.rules__editor {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.rules__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rules__link {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.rules__link:hover {
+  color: var(--text);
 }
 
 /* ------------------------------------------------------------------- fil */

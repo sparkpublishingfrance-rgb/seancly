@@ -70,6 +70,19 @@ export const LEGAL_PAGES: LegalPage[] = [
     ],
   },
   {
+    slug: "droit-auteur",
+    title: "Politique de droit d'auteur",
+    intro:
+      "Comment nous traitons les contenus protégés, et comment signaler une atteinte à tes droits.",
+    outline: [
+      "Contenus publiés par les membres et responsabilité de chacun",
+      "Affiches, extraits et métadonnées : origine et conditions d'usage",
+      "Procédure de signalement d'une atteinte au droit d'auteur",
+      "Retrait, contestation et rétablissement",
+      "Récidive et fermeture de compte",
+    ],
+  },
+  {
     slug: "tarifs",
     title: "Tarifs",
     intro:

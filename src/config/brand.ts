@@ -18,6 +18,10 @@ export const BRAND = {
   tagline: "Le cinéma, mais avec du monde autour.",
   /** Domaine des pages publiques de créateur. */
   public_domain: "seancly.app",
+  /** Société éditrice, telle qu'elle apparaît dans les mentions. */
+  publisher: "Librist",
+  /** Adresse de contact publique, y compris pour les signalements. */
+  contact_email: "contact@seancly.com",
   /** Mentions à afficher tant que la marque et les sources ne sont pas arrêtées. */
   notices: {
     inpi: "Marque en cours de dépôt, recherche d'antériorité INPI à faire (classes 9, 41, 42).",

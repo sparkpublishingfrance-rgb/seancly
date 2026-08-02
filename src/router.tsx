@@ -7,6 +7,7 @@ import { Home } from "./components/Home";
 import { Layout } from "./components/Layout";
 import { ListDetail } from "./components/ListDetail";
 import { LegalPage } from "./components/LegalPage";
+import { Rules } from "./components/Rules";
 import { Moderation } from "./components/Moderation";
 import { MySpace } from "./components/MySpace";
 import { SignIn } from "./components/SignIn";
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       // adresse vivante, elle circule déjà dans des liens.
       { path: "/studio", element: <Navigate to="/mon-espace" replace /> },
       { path: "/connexion", element: <SignIn /> },
+      { path: "/regles", element: <Rules /> },
 
       // Pages légales et institutionnelles, gabarits mais routes réelles.
       ...LEGAL_PAGES.map((page) => ({
