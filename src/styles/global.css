@@ -1555,11 +1555,17 @@ a {
 
 .studio-head__meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 9px;
+  gap: 4px 9px;
   margin: 5px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+/* Sans repli, « créateur depuis … » se tasse en colonne sur un écran étroit. */
+.studio-head__meta > * {
+  flex-shrink: 0;
 }
 
 .studio-head__sep {
