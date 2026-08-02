@@ -21,6 +21,8 @@ export interface CreatorProfile {
   initials: string;
   verified: boolean;
   is_creator: boolean;
+  /** Accès à la file de modération. */
+  is_admin: boolean;
   /** Date d'arrivée, format "YYYY-MM-DD". */
   member_since: string;
   plan: CreatorPlan;

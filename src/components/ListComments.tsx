@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import type { FeedProfile } from "../api/feed";
 import type { ListComment } from "../api/listSocial";
 import { messageOf } from "../api/client";
 import {
@@ -29,6 +30,7 @@ export function ListComments({ listId, ownerId }: ListCommentsProps) {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const viewerId = profile?.id;
   const isOwner = viewerId === ownerId;
@@ -85,11 +87,18 @@ export function ListComments({ listId, ownerId }: ListCommentsProps) {
         Commentaires
       </h2>
 
-      {status === "signed-in" && viewerId ? (
+      {status === "signed-in" && viewerId && profile ? (
         <CommentForm
           listId={listId}
-          authorId={viewerId}
+          author={{
+            id: profile.id,
+            slug: profile.link_in_bio_slug,
+            displayName: profile.display_name,
+            initials: profile.initials,
+            avatarColor: profile.avatar_color,
+          }}
           onAdded={(comment) => setComments((current) => [comment, ...current])}
+          onNotice={setNotice}
           onError={setError}
         />
       ) : (
@@ -102,6 +111,7 @@ export function ListComments({ listId, ownerId }: ListCommentsProps) {
       )}
 
       {error && <Notice tone="error">{error}</Notice>}
+      {notice && <Notice>{notice}</Notice>}
 
       {loading ? (
         <Spinner label="Nous chargeons les commentaires" />
@@ -179,12 +189,14 @@ export function ListComments({ listId, ownerId }: ListCommentsProps) {
 
 type CommentFormProps = {
   listId: string;
-  authorId: string;
+  author: FeedProfile;
   onAdded: (comment: ListComment) => void;
+  /** Message de modération, quand le commentaire n'apparaît pas tout de suite. */
+  onNotice: (message: string) => void;
   onError: (message: string) => void;
 };
 
-function CommentForm({ listId, authorId, onAdded, onError }: CommentFormProps) {
+function CommentForm({ listId, author, onAdded, onNotice, onError }: CommentFormProps) {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -195,8 +207,18 @@ function CommentForm({ listId, authorId, onAdded, onError }: CommentFormProps) {
 
     setBusy(true);
     try {
-      onAdded(await addListComment(listId, authorId, trimmed));
-      setBody("");
+      const posted = await addListComment(listId, author, trimmed);
+
+      if (posted.status === "visible" || posted.status === "flagged") {
+        onAdded(posted.comment);
+        setBody("");
+      } else {
+        // Rien ne s'affiche : le dire franchement plutôt que de laisser croire
+        // que le commentaire est en ligne. Un texte bloqué est effacé du champ,
+        // un texte en vérification y reste au cas où l'auteur veuille le revoir.
+        onNotice(posted.message);
+        if (posted.status === "blocked") setBody("");
+      }
     } catch (cause) {
       onError(messageOf(cause));
     } finally {

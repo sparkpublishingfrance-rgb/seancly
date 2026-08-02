@@ -15,6 +15,7 @@ export function toCreatorProfile(row: ProfileRow): CreatorProfile {
     initials: initialsOf(row.display_name),
     verified: row.verified,
     is_creator: row.is_creator,
+    is_admin: row.is_admin,
     member_since: row.created_at,
     plan: row.plan,
     bio: row.bio ?? "",

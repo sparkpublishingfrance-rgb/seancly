@@ -9,6 +9,8 @@
 
 export type CreatorPlanRow = "free" | "pro" | "cine_plus";
 
+export type ModerationStatusRow = "visible" | "flagged" | "hidden" | "blocked";
+
 export type ActivityVerbRow =
   | "rated"
   | "reviewed"
@@ -34,6 +36,7 @@ export interface Database {
           bio: string | null;
           avatar_color: string;
           is_creator: boolean;
+          is_admin: boolean;
           plan: CreatorPlanRow;
           verified: boolean;
           created_at: string;
@@ -184,8 +187,10 @@ export interface Database {
           updated_at: string;
           deleted_at: string | null;
           deleted_by: string | null;
+          moderation_status: ModerationStatusRow;
         };
-        Insert: { id?: string; list_id: string; author_id: string; body: string };
+        // Aucune insertion cliente : la publication passe par l'Edge Function.
+        Insert: never;
         // Seul le texte est modifiable ; les retraits passent par une fonction.
         Update: { body?: string };
         Relationships: [
@@ -253,6 +258,32 @@ export interface Database {
         Args: { comment_id: string };
         Returns: undefined;
       };
+      review_comment: {
+        Args: {
+          target_comment: string;
+          new_status: ModerationStatusRow;
+          review_reason?: string | null;
+        };
+        Returns: undefined;
+      };
+      moderation_queue: {
+        Args: { max_rows?: number };
+        Returns: {
+          comment_id: string;
+          list_id: string;
+          list_title: string;
+          author_id: string;
+          author_handle: string;
+          author_name: string;
+          body: string;
+          status: ModerationStatusRow;
+          level: number | null;
+          category: string | null;
+          reason: string | null;
+          source: string | null;
+          created_at: string;
+        }[];
+      };
       popular_lists: {
         Args: { window_days?: number; max_rows?: number };
         Returns: {
@@ -271,6 +302,7 @@ export interface Database {
       activity_verb: ActivityVerbRow;
       activity_object: ActivityObjectRow;
       activity_visibility: ActivityVisibilityRow;
+      moderation_status: ModerationStatusRow;
     };
   };
 }
