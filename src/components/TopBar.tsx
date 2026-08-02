@@ -1,25 +1,32 @@
+import { Link, useLocation } from "react-router-dom";
 import { BRAND, NAV_ITEMS } from "../config/brand";
 import { COINS, CURRENT_USER } from "../data/community";
 import { IconCoin, IconSearch } from "./icons";
 
 export function TopBar() {
+  const { pathname } = useLocation();
+
   return (
     <header className="topbar">
       <div className="shell topbar__inner">
-        <a className="topbar__logo" href="#" aria-label={`${BRAND.name}, accueil`}>
+        <Link className="topbar__logo" to="/" aria-label={`${BRAND.name}, accueil`}>
           {BRAND.logo.start}
           <span className="topbar__logo-accent">{BRAND.logo.accent}</span>
           {BRAND.logo.end}
-        </a>
+        </Link>
 
         <nav className="topbar__nav" aria-label="Navigation principale">
-          {NAV_ITEMS.map((item, index) => (
-            <a
-              key={item}
-              className="topbar__nav-link"
-              href="#"
-              aria-current={index === 0 ? "page" : undefined}
-            >
+          {/* Seul « Accueil » a une route pour l'instant. Les autres attendent
+              leurs écrans. */}
+          <Link
+            className="topbar__nav-link"
+            to="/"
+            aria-current={pathname === "/" ? "page" : undefined}
+          >
+            {NAV_ITEMS[0]}
+          </Link>
+          {NAV_ITEMS.slice(1).map((item) => (
+            <a key={item} className="topbar__nav-link" href="#">
               {item}
             </a>
           ))}

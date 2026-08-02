@@ -1,9 +1,6 @@
-import { Home } from "./components/Home";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./router";
 
-/**
- * Un seul écran pour l'instant, donc pas de routeur.
- * Il sera ajouté avec la fiche film `/film/:id`.
- */
 export default function App() {
-  return <Home />;
+  return <RouterProvider router={router} />;
 }

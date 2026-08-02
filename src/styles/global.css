@@ -635,10 +635,25 @@ a {
   background: var(--accent);
 }
 
+/* Lien étiré sur la carte, sous les boutons d'action. */
+.poster__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.poster__link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -4px;
+  border-radius: var(--radius);
+}
+
 .poster__overlay {
   position: absolute;
   inset: 0;
   z-index: 3;
+  /* Laisse passer les clics vers le lien, sauf sur les boutons eux-mêmes. */
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -658,6 +673,7 @@ a {
 }
 
 .poster__action {
+  pointer-events: auto;
   display: grid;
   place-items: center;
   width: 40px;
@@ -980,6 +996,451 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
+/* =========================================================================
+   Fiche film
+   ========================================================================= */
+
+.film-hero {
+  position: relative;
+  margin-top: -74px;
+  min-height: min(74vh, 660px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.film-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fond fondu vers le noir pour enchaîner sans couture sur le contenu. */
+.film-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(11, 11, 15, 0.95) 0%, rgba(11, 11, 15, 0.28) 68%),
+    linear-gradient(0deg, var(--bg) 3%, rgba(11, 11, 15, 0) 58%);
+}
+
+.film-hero__inner {
+  position: relative;
+  padding-top: 116px;
+  padding-bottom: 52px;
+  max-width: min(var(--maxw), 100%);
+}
+
+.film-hero__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 0.18s ease;
+}
+
+.film-hero__back:hover {
+  color: var(--raspberry);
+}
+
+.film-hero__title {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+  line-height: 0.94;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.film-hero__tagline {
+  margin: 14px 0 0;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 15px;
+  font-style: italic;
+}
+
+.film-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+/* Le chip VF · VOSTFR est exclu : le séparateur tomberait dans sa bordure. */
+.film-hero__meta > span + span:not(.film-hero__audio)::before {
+  content: "·";
+  margin-right: 12px;
+  opacity: 0.5;
+}
+
+.film-hero__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.film-hero__audio {
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+}
+
+.film-hero__genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.film-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+/* ----------------------------------------------------------- note sociale */
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 30px;
+  padding: 16px 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.social__score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 0;
+  color: var(--gold);
+}
+
+.social__score svg {
+  align-self: center;
+}
+
+.social__score-value {
+  font-size: 23px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.social__score-scale {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.social__score-label {
+  margin-left: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.social__friends {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.social__friend-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.friend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.friend__avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 241, 244, 0.14);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.friend__rating {
+  color: var(--gold);
+  font-size: 12.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.social__friends-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.social__friends-label strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------- sections fiche */
+
+.film-section__title {
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.film-section__prose {
+  margin: 0;
+  max-width: 68ch;
+  color: #c6c0cc;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.film-section__empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------ où regarder */
+
+.providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 34px;
+}
+
+.providers__label {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.providers__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 15px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.provider__mark {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-family: var(--font-display);
+  font-size: 13px;
+}
+
+/* -------------------------------------------------------- avertissements */
+
+.warnings {
+  max-width: 68ch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.warnings__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  transition: color 0.18s ease;
+}
+
+.warnings__toggle:hover {
+  color: var(--text);
+}
+
+.warnings__chevron {
+  display: inline-flex;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.warnings__chevron--open {
+  transform: rotate(180deg);
+}
+
+.warnings__panel {
+  padding: 0 18px 16px;
+}
+
+.warnings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+  color: #c6c0cc;
+  font-size: 13.5px;
+}
+
+/* ------------------------------------------------------- casting, équipe */
+
+.crew {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 22px;
+}
+
+.crew__line {
+  display: flex;
+  gap: 12px;
+  font-size: 13.5px;
+}
+
+.crew__label {
+  width: 108px;
+  flex-shrink: 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.crew__names {
+  margin: 0;
+  font-weight: 600;
+}
+
+.cast {
+  display: flex;
+  gap: 14px;
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 4px var(--gutter) 10px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--gutter);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cast::-webkit-scrollbar {
+  display: none;
+}
+
+.cast__item {
+  flex: 0 0 auto;
+  width: 116px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+  scroll-snap-align: start;
+}
+
+.cast__photo {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+}
+
+.cast__name {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cast__role {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* ------------------------------------------------------------- état vide */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-block: 170px 120px;
+  text-align: center;
+}
+
+.empty__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.empty__body {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--muted);
+}
+
 /* ------------------------------------------------------------------ pied */
 
 .foot {
@@ -1116,6 +1577,37 @@ a {
 
   .poster {
     width: 152px;
+  }
+
+  .film-hero {
+    min-height: 62vh;
+  }
+
+  .film-hero__inner {
+    padding-top: 104px;
+    padding-bottom: 36px;
+  }
+
+  .film-hero__title {
+    max-width: none;
+  }
+
+  .film-hero__actions .btn {
+    flex: 1 0 auto;
+    justify-content: center;
+  }
+
+  .social {
+    padding: 16px 18px;
+  }
+
+  .crew__line {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .crew__label {
+    width: auto;
   }
 }
 

@@ -12,6 +12,7 @@ export const TITLES: TmdbTitle[] = [
     title: "La Nuit Écarlate",
     overview:
       "Une nuit d'hiver, une commissaire rappelée d'office suit la trace d'un tueur qui signe ses crimes à la craie rouge. Plus elle avance, moins la ville lui semble étrangère.",
+    tagline: "Certaines nuits ne se terminent pas au matin.",
     release_date: "2024-11-06",
     vote_average: 8.4,
     runtime: 128,
@@ -21,9 +22,43 @@ export const TITLES: TmdbTitle[] = [
     ],
     poster_path: null,
     backdrop_path: null,
+    credits: {
+      cast: [
+        { id: 9001, name: "Camille Rousset", character: "Commissaire Vasseur", profile_path: null },
+        { id: 9002, name: "Idriss Benali", character: "Lieutenant Marchand", profile_path: null },
+        { id: 9003, name: "Hélène Sarda", character: "La légiste", profile_path: null },
+        { id: 9004, name: "Yann Kervella", character: "Le veilleur de nuit", profile_path: null },
+        { id: 9005, name: "Marion Delcourt", character: "Claire", profile_path: null },
+        { id: 9006, name: "Bruno Astier", character: "Le procureur", profile_path: null },
+      ],
+      crew: [
+        { id: 8001, name: "Léa Fontaine", job: "Director" },
+        { id: 8002, name: "Léa Fontaine", job: "Screenplay" },
+        { id: 8003, name: "Paul Verheyden", job: "Director of Photography" },
+        { id: 8004, name: "Sonia Maréchal", job: "Original Music Composer" },
+      ],
+    },
     app: {
       spine_color: "#C0386A",
       recommended_by: ["@cinéphage", "@salleobscure", "@vhsclub", "@nuitblanche"],
+      trigger_warnings: [
+        "Violences sur adultes, montrées à l'écran",
+        "Scènes de sang appuyées",
+        "Évocation de suicide",
+      ],
+      watch_providers: [
+        { name: "Canal+", type: "flatrate" },
+        { name: "Max", type: "flatrate" },
+        { name: "Universciné", type: "rent" },
+        { name: "Apple TV", type: "rent" },
+        { name: "Apple TV", type: "buy" },
+      ],
+      friends_ratings: [
+        { handle: "@cinéphage", initials: "CP", rating: 9 },
+        { handle: "@salleobscure", initials: "SO", rating: 8.5 },
+        { handle: "@vhsclub", initials: "VC", rating: 7.5 },
+        { handle: "@nuitblanche", initials: "NB", rating: 9.5 },
+      ],
     },
   },
   {
@@ -49,6 +84,7 @@ export const TITLES: TmdbTitle[] = [
     title: "Néon Sombre",
     overview:
       "Dans un port du Nord noyé sous la pluie, une brigade de nuit démêle une affaire de disparitions que personne ne veut voir résolue.",
+    tagline: "Sous les grues, la ville continue sans eux.",
     release_date: "2022-09-01",
     vote_average: 8.1,
     genres: [
@@ -57,7 +93,36 @@ export const TITLES: TmdbTitle[] = [
     ],
     poster_path: null,
     backdrop_path: null,
-    app: { spine_color: "#7B4BC9", progress: 62 },
+    credits: {
+      cast: [
+        { id: 9101, name: "Nadia Belkacem", character: "Capitaine Ferrand", profile_path: null },
+        { id: 9102, name: "Erwan Le Gall", character: "Sacha", profile_path: null },
+        { id: 9103, name: "Théo Mazet", character: "Le docker", profile_path: null },
+        { id: 9104, name: "Juliette Vasseur", character: "Anne-Marie", profile_path: null },
+        { id: 9105, name: "Karim Toussaint", character: "Le capitaine du port", profile_path: null },
+      ],
+      crew: [
+        { id: 8101, name: "Mathieu Sorel", job: "Director" },
+        { id: 8102, name: "Clara Nguyen", job: "Screenplay" },
+        { id: 8103, name: "Franck Aubin", job: "Director of Photography" },
+      ],
+    },
+    app: {
+      spine_color: "#7B4BC9",
+      progress: 62,
+      trigger_warnings: [
+        "Disparition d'enfant, évoquée sans être montrée",
+        "Consommation de drogues",
+      ],
+      watch_providers: [
+        { name: "Arte", type: "flatrate" },
+        { name: "France TV", type: "flatrate" },
+      ],
+      friends_ratings: [
+        { handle: "@salleobscure", initials: "SO", rating: 8 },
+        { handle: "@nuitblanche", initials: "NB", rating: 8.5 },
+      ],
+    },
   },
   {
     id: 104,
@@ -115,6 +180,7 @@ export const TITLES: TmdbTitle[] = [
     title: "Cendres",
     overview:
       "Après l'incendie d'un théâtre, une costumière reconstitue la dernière soirée à partir des vêtements retrouvés. Sa reconstitution ne colle pas avec l'enquête.",
+    tagline: "Ce qui a brûlé parle encore.",
     release_date: "2023-10-04",
     vote_average: 8.0,
     runtime: 97,
@@ -124,7 +190,25 @@ export const TITLES: TmdbTitle[] = [
     ],
     poster_path: null,
     backdrop_path: null,
-    app: { spine_color: "#9C3B2E" },
+    credits: {
+      cast: [
+        { id: 9201, name: "Agnès Perrot", character: "Mathilde", profile_path: null },
+        { id: 9202, name: "Samuel Riva", character: "Le régisseur", profile_path: null },
+        { id: 9203, name: "Louise Berthaud", character: "L'enquêtrice", profile_path: null },
+        { id: 9204, name: "Vincent Adamo", character: "Le directeur du théâtre", profile_path: null },
+      ],
+      crew: [
+        { id: 8201, name: "Rachel Ostermann", job: "Director" },
+        { id: 8202, name: "Rachel Ostermann", job: "Screenplay" },
+        { id: 8203, name: "Marc Lévrier", job: "Screenplay" },
+      ],
+    },
+    // Pas de `watch_providers` ici : la fiche doit assumer l'état vide.
+    app: {
+      spine_color: "#9C3B2E",
+      trigger_warnings: ["Incendie et brûlures", "Deuil"],
+      friends_ratings: [{ handle: "@cinéphage", initials: "CP", rating: 8.5 }],
+    },
   },
   {
     id: 108,
@@ -235,6 +319,24 @@ export const RAILS: Rail[] = [
 /** Retrouve un titre par identifiant. Renvoie `undefined` si l'identifiant est inconnu. */
 export function titleById(id: number): TmdbTitle | undefined {
   return TITLES.find((title) => title.id === id);
+}
+
+/**
+ * Rangée « Dans le même esprit » de la fiche : titres partageant au moins un
+ * genre, le titre courant exclu. Repli sur les autres titres si rien ne matche.
+ */
+export function similarTo(title: TmdbTitle, limit = 8): Rail {
+  const genreIds = new Set(title.genres.map((genre) => genre.id));
+  const others = TITLES.filter((other) => other.id !== title.id);
+  const sameGenre = others.filter((other) =>
+    other.genres.some((genre) => genreIds.has(genre.id)),
+  );
+  const pool = sameGenre.length > 0 ? sameGenre : others;
+
+  return {
+    title: "Dans le même esprit",
+    ids: pool.slice(0, limit).map((other) => other.id),
+  };
 }
 
 /** Extrait l'année de `release_date` ("2024-11-06" donne "2024"). */

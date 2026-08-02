@@ -1,21 +1,9 @@
+import { Link } from "react-router-dom";
 import type { TmdbTitle } from "../types/tmdb";
 import { yearOf } from "../data/titles";
-import { COLORS } from "../config/theme";
+import { COLORS, posterGradient } from "../config/theme";
+import { TMDB_IMAGE_BASE } from "../config/images";
 import { IconPlay, IconPlus, IconStar } from "./icons";
-
-/** URL de base des images TMDB, pour le jour où `poster_path` sera renseigné. */
-const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-
-/**
- * Construit le dégradé de l'affiche placeholder à partir de la couleur de tranche.
- * Les suffixes hexadécimaux ajoutent l'opacité au format #RRGGBBAA.
- */
-function placeholderBackground(spine: string): string {
-  return [
-    `radial-gradient(118% 76% at 22% 8%, ${spine}b0 0%, ${spine}22 58%, transparent 72%)`,
-    `linear-gradient(168deg, ${spine}66 0%, ${COLORS.bg}f2 62%, ${COLORS.bg} 100%)`,
-  ].join(", ");
-}
 
 type PosterCardProps = {
   title: TmdbTitle;
@@ -32,19 +20,27 @@ export function PosterCard({ title }: PosterCardProps) {
         {title.poster_path ? (
           <img
             className="poster__img"
-            src={`${TMDB_IMAGE_BASE}${title.poster_path}`}
+            src={`${TMDB_IMAGE_BASE.poster}${title.poster_path}`}
             alt={`Affiche de ${title.title}`}
             loading="lazy"
           />
         ) : (
           <div
             className="poster__placeholder"
-            style={{ background: placeholderBackground(spine) }}
+            style={{ background: posterGradient(spine) }}
           >
             <h3 className="poster__name">{title.title}</h3>
             <span className="poster__year">{year}</span>
           </div>
         )}
+
+        {/* Lien étiré sur toute la carte. Les boutons d'action passent au-dessus,
+            ce qui évite d'imbriquer des éléments interactifs dans un lien. */}
+        <Link
+          className="poster__link"
+          to={`/film/${title.id}`}
+          aria-label={`Voir la fiche de ${title.title}, ${year}`}
+        />
 
         <span className="poster__rating">
           <IconStar size={11} />
@@ -88,14 +84,6 @@ export function PosterCard({ title }: PosterCardProps) {
           </div>
         )}
       </div>
-
-      {/* Le titre visible vit dans le placeholder. Quand la vraie affiche arrive,
-          ce doublon prend le relais pour les lecteurs d'écran. */}
-      {title.poster_path !== null && (
-        <span className="sr-only">
-          {title.title}, {year}
-        </span>
-      )}
     </article>
   );
 }
