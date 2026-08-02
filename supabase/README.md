@@ -53,12 +53,14 @@ Trois choix méritent d'être signalés :
   triggers posés sur `ratings`, `lists`, `list_items` et `follows`, ce qui rend
   impossible la fabrication d'un faux événement.
 
-## Vérification manuelle de la RLS
+## Vérification de la RLS
 
-À faire après application, avec deux comptes de test A et B créés par lien
-magique. Dans l'éditeur SQL, `set role authenticated` et
-`set request.jwt.claims` permettent de rejouer chaque cas sans passer par le
-client.
+Le protocole se rejoue avec **deux comptes**, A et B, en passant par l'API
+REST plutôt que par l'éditeur SQL : c'est le même chemin que l'application, donc
+la même combinaison de droits de colonne, de policies et de fonctions. Un seul
+compte ne suffit pas, la moitié des cas ci-dessous sont croisés.
+
+Dernier passage : tous les cas au vert, y compris les cas croisés.
 
 | Cas | Attendu |
 | --- | --- |
@@ -79,6 +81,15 @@ client.
 | A crée une liste privée | aucun événement |
 | A rend cette liste publique | un événement `created_list` apparaît |
 | A se désabonne de B | l'événement `followed` disparaît |
+| B lit la liste privée de A, ses titres, ses commentaires | zéro ligne |
+| B suit ou commente une liste privée de A | refus |
+| B modifie le commentaire de A | zéro ligne affectée |
+| B appelle `hide_list_comment` sur la liste de A | sans effet |
+| B appelle `delete_my_list_comment` sur le commentaire de A | sans effet |
+| A masque le commentaire de B sur sa liste | retiré pour tous, texte intact, `deleted_by` = A |
+| B, auteur, voit encore son commentaire retiré | visible de lui seul |
+| A lit l'activité publique de B sans le suivre | visible, c'est le périmètre communauté |
+| Le fil des abonnements de A avant abonnement | B absent |
 | A suit une liste privée de B | refus |
 | A commente une liste privée de B | refus |
 | A modifie le commentaire de B | zéro ligne affectée |
@@ -86,5 +97,11 @@ client.
 | A masque un commentaire sur la liste de B | sans effet |
 | anon lit les commentaires d'une liste privée | zéro ligne |
 
-Le résultat de ce passage est à consigner dans le message de commit qui active
-la base, conformément au standard.
+Une remarque relevée en vérifiant : une fois qu'un propriétaire a masqué un
+commentaire, il ne le voit plus lui-même, la policy de lecture ne couvrant que
+le non supprimé ou ce dont on est l'auteur. C'est sans danger, mais cela
+interdit tout retour en arrière. Ouvrir la lecture au propriétaire de la liste
+serait le préalable à un « réafficher ».
+
+Le résultat de chaque passage est à consigner dans le message de commit qui
+touche à la base, conformément au standard.
