@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import type { PublicList } from "../api/listSocial";
 import type { CreatorProfile } from "../types/studio";
@@ -186,6 +186,9 @@ function FollowListButton({ listId, viewer, onChange }: FollowListButtonProps) {
   const [error, setError] = useState<string | null>(null);
 
   const viewerId = viewer?.id;
+  // Une bascule en cours prime sur la lecture d'état lancée au montage : sans
+  // ce garde-fou, une réponse tardive écrase le choix de l'utilisateur.
+  const touched = useRef(false);
 
   useEffect(() => {
     if (!viewerId) return;
@@ -193,7 +196,7 @@ function FollowListButton({ listId, viewer, onChange }: FollowListButtonProps) {
 
     void getListFollowState(listId, viewerId)
       .then((value) => {
-        if (alive) setFollowing(value);
+        if (alive && !touched.current) setFollowing(value);
       })
       .catch(() => undefined);
 
@@ -217,6 +220,7 @@ function FollowListButton({ listId, viewer, onChange }: FollowListButtonProps) {
     if (!viewerId) return;
     const previous = following;
 
+    touched.current = true;
     setFollowing(!previous);
     onChange(previous ? -1 : 1);
     setBusy(true);
