@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# État local de la CLI Supabase, régénéré par `supabase link`
+supabase/.temp/
