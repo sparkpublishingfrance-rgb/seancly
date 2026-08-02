@@ -57,7 +57,22 @@ function toFeedProfile(row: ProfileRow): FeedProfile {
   };
 }
 
+/**
+ * Périmètre du fil.
+ * `community` montre ce que tous les membres publient, `following` s'en tient
+ * aux personnes suivies.
+ */
+export type FeedScope = "community" | "following";
+
+/**
+ * Verbes retenus dans le fil communauté.
+ * Entre inconnus, « untel suit untel » ou « untel a enrichi sa liste » n'est
+ * que du bruit : seules les notes et les critiques disent quelque chose.
+ */
+const COMMUNITY_VERBS = ["rated", "reviewed"] as const;
+
 type FeedOptions = {
+  scope?: FeedScope;
   limit?: number;
   /** Horodatage de la dernière ligne reçue, pour la page suivante. */
   before?: string;
@@ -73,7 +88,7 @@ type FeedOptions = {
  */
 export async function getFeed(
   viewerId: string,
-  { limit = 20, before }: FeedOptions = {},
+  { scope = "following", limit = 20, before }: FeedOptions = {},
 ): Promise<FeedPage> {
   const client = requireSupabase();
 
@@ -83,17 +98,21 @@ export async function getFeed(
   );
   const followingIds = follows.map((row) => row.following_id);
 
-  // Le fil réunit les abonnements et le lecteur : sans cela, un membre actif qui
-  // ne suit encore personne verrait un écran vide alors qu'il vient d'agir.
-  const actors = [viewerId, ...followingIds];
-
   let query = client
     .from("activity")
     .select("id, actor_id, verb, object_type, object_ref, metadata, created_at")
-    .in("actor_id", actors)
     .order("created_at", { ascending: false })
     // Une ligne de plus que demandé : sa présence dit s'il reste une page.
     .limit(limit + 1);
+
+  if (scope === "community") {
+    // Aucun filtre d'auteur : la RLS se charge de ne montrer que le public.
+    query = query.in("verb", [...COMMUNITY_VERBS]);
+  } else {
+    // Le fil des abonnements inclut le lecteur : sans cela, un membre actif qui
+    // ne suit encore personne verrait un écran vide alors qu'il vient d'agir.
+    query = query.in("actor_id", [viewerId, ...followingIds]);
+  }
 
   if (before) query = query.lt("created_at", before);
 

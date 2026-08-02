@@ -16,7 +16,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/film/:id", element: <FilmDetail /> },
-      { path: "/fil", element: <Feed /> },
+      { path: "/actualite", element: <Feed /> },
       { path: "/mon-espace", element: <MySpace /> },
       // « Studio » est devenu « Mon espace » au lot 6. On garde l'ancienne
       // adresse vivante, elle circule déjà dans des liens.

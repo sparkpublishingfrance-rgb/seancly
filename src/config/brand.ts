@@ -37,7 +37,7 @@ export const NAV_ITEMS: {
   requiresAuth?: boolean;
 }[] = [
   { label: "Accueil", to: "/" },
-  { label: "Fil", to: "/fil", requiresAuth: true },
+  { label: "Actualité", to: "/actualite", requiresAuth: true },
   { label: "Films", to: null },
   { label: "Séries", to: null },
   { label: "Guildes", to: null },

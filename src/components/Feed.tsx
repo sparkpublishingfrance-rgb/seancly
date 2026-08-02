@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import type { FeedEvent, FeedProfile } from "../api/feed";
+import type { FeedEvent, FeedProfile, FeedScope } from "../api/feed";
 import type { CreatorProfile } from "../types/studio";
 import { messageOf } from "../api/client";
 import { getFeed } from "../api/feed";
@@ -10,24 +10,30 @@ import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { formatRelativeTime, formatScore } from "../utils/format";
 import { Notice, Spinner } from "./StateMessage";
 
+const SCOPES: { id: FeedScope; label: string }[] = [
+  { id: "community", label: "La communauté" },
+  { id: "following", label: "Mes abonnements" },
+];
+
 /**
- * Page du fil, à sa propre adresse.
+ * Actualité des membres, à sa propre adresse.
  *
- * C'est une destination de retour quotidien : elle mérite mieux que deux clics
- * dans un onglet d'espace personnel. La page reste privée, l'accueil public.
+ * Deux périmètres : ce que publie toute la communauté, et ce que font les
+ * personnes suivies. C'est une destination de retour quotidien, d'où sa place
+ * dans la navigation principale. La page reste privée, l'accueil public.
  */
 export function Feed() {
-  useDocumentTitle("Fil");
+  useDocumentTitle("Actualité");
 
   const { status, profile } = useAuth();
 
   if (status === "unconfigured") {
     return (
       <main className="shell empty">
-        <h1 className="empty__title">Fil hors ligne</h1>
+        <h1 className="empty__title">Actualité hors ligne</h1>
         <p className="empty__body">
-          La base n'est pas encore reliée à cette installation, donc ton fil n'a rien
-          à afficher.
+          La base n'est pas encore reliée à cette installation, donc l'actualité n'a
+          rien à afficher.
         </p>
         <Link className="btn btn--ghost" to="/">
           Retour à l'accueil
@@ -41,10 +47,10 @@ export function Feed() {
       <main className="shell empty">
         <h1 className="empty__title">Connecte-toi</h1>
         <p className="empty__body">
-          Ton fil réunit ce qu'ont fait les membres que tu suis. Il te faut un compte
-          pour l'ouvrir.
+          L'actualité réunit les notes et les critiques des membres. Il te faut un
+          compte pour la lire.
         </p>
-        <Link className="btn btn--primary" to="/connexion?retour=%2Ffil">
+        <Link className="btn btn--primary" to="/connexion?retour=%2Factualite">
           Se connecter
         </Link>
       </main>
@@ -54,21 +60,75 @@ export function Feed() {
   if (status === "loading" || !profile) {
     return (
       <main className="shell feed-page">
-        <Spinner label="Nous chargeons ton fil" />
+        <Spinner label="Nous chargeons l'actualité" />
       </main>
     );
   }
 
   return (
     <main className="shell feed-page">
-      <h1 className="feed-page__title">Ton fil</h1>
-      <FeedList viewer={profile} />
+      <h1 className="feed-page__title">Actualité</h1>
+      <FeedScopes viewer={profile} />
     </main>
+  );
+}
+
+/** Bascule entre les deux périmètres, au motif d'onglets habituel. */
+function FeedScopes({ viewer }: { viewer: CreatorProfile }) {
+  const [scope, setScope] = useState<FeedScope>("community");
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    const last = SCOPES.length - 1;
+    let next = index;
+
+    if (event.key === "ArrowRight") next = index === last ? 0 : index + 1;
+    else if (event.key === "ArrowLeft") next = index === 0 ? last : index - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = last;
+    else return;
+
+    event.preventDefault();
+    setScope(SCOPES[next].id);
+    tabRefs.current[next]?.focus();
+  }
+
+  return (
+    <>
+      <div className="tabs" role="tablist" aria-label="Périmètre de l'actualité">
+        {SCOPES.map((entry, index) => (
+          <button
+            key={entry.id}
+            ref={(node) => {
+              tabRefs.current[index] = node;
+            }}
+            type="button"
+            role="tab"
+            id={`scope-${entry.id}`}
+            className="tab"
+            aria-selected={scope === entry.id}
+            aria-controls={`feed-${entry.id}`}
+            tabIndex={scope === entry.id ? 0 : -1}
+            onClick={() => setScope(entry.id)}
+            onKeyDown={(event) => onKeyDown(event, index)}
+          >
+            {entry.label}
+          </button>
+        ))}
+      </div>
+
+      <div role="tabpanel" id={`feed-${scope}`} aria-labelledby={`scope-${scope}`} tabIndex={0}>
+        {/* La clé force un remontage : changer de périmètre repart d'une page
+            vierge plutôt que d'empiler deux fils. */}
+        <FeedList viewer={viewer} scope={scope} key={scope} />
+      </div>
+    </>
   );
 }
 
 type FeedListProps = {
   viewer: CreatorProfile;
+  scope: FeedScope;
 };
 
 /**
@@ -76,7 +136,7 @@ type FeedListProps = {
  * Elle lit `activity`, matérialisée par des triggers : aucun assemblage de
  * jointures au chargement.
  */
-function FeedList({ viewer }: FeedListProps) {
+function FeedList({ viewer, scope }: FeedListProps) {
   const [events, setEvents] = useState<FeedEvent[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [following, setFollowing] = useState(0);
@@ -86,7 +146,7 @@ function FeedList({ viewer }: FeedListProps) {
 
   const load = useCallback(async () => {
     try {
-      const page = await getFeed(viewer.id);
+      const page = await getFeed(viewer.id, { scope });
       setEvents(page.events);
       setCursor(page.nextCursor);
       setFollowing(page.followingCount);
@@ -96,7 +156,7 @@ function FeedList({ viewer }: FeedListProps) {
     } finally {
       setLoading(false);
     }
-  }, [viewer.id]);
+  }, [viewer.id, scope]);
 
   useEffect(() => {
     void load();
@@ -107,7 +167,7 @@ function FeedList({ viewer }: FeedListProps) {
     setLoadingMore(true);
 
     try {
-      const page = await getFeed(viewer.id, { before: cursor });
+      const page = await getFeed(viewer.id, { scope, before: cursor });
       setEvents((current) => [...current, ...page.events]);
       setCursor(page.nextCursor);
       setError(null);
@@ -118,26 +178,30 @@ function FeedList({ viewer }: FeedListProps) {
     }
   }
 
+  if (loading) return <Spinner label="Nous chargeons l'actualité" />;
+
   return (
     <>
       {error && <Notice tone="error">{error}</Notice>}
 
       {/* L'invitation à suivre n'a de sens que si le fil s'est bien chargé :
           sinon elle contredirait le message d'erreur juste au-dessus. */}
-      {following === 0 && !loading && !error && (
+      {!error && scope === "following" && following === 0 && (
         <p className="studio-empty">
           Suis des membres pour voir leur activité ici. Ouvre la page publique d'un
           créateur, puis abonne-toi.
         </p>
       )}
 
-      {loading ? (
-        <Spinner label="Nous chargeons ton fil" />
-      ) : events.length === 0 ? (
-        following > 0 && (
-          <p className="studio-empty">Rien de nouveau pour l'instant.</p>
-        )
-      ) : (
+      {!error && events.length === 0 && (
+        <p className="studio-empty">
+          {scope === "community"
+            ? "Personne n'a encore noté de titre. Ouvre une fiche et lance-toi."
+            : "Rien de nouveau pour l'instant."}
+        </p>
+      )}
+
+      {events.length > 0 && (
         <>
           <ol className="feed">
             {events.map((event) => (
@@ -167,8 +231,7 @@ function FeedCard({ event }: { event: FeedEvent }) {
       <Avatar profile={event.actor} />
 
       <p className="feed__line">
-        <ActorName profile={event.actor} />{" "}
-        <FeedSentence event={event} />
+        <ActorName profile={event.actor} /> <FeedSentence event={event} />
       </p>
 
       <time className="feed__time" dateTime={event.createdAt}>

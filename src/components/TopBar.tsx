@@ -164,6 +164,11 @@ function AccountMenu({ initials, name }: AccountMenuProps) {
             </Link>
           </li>
           <li role="none">
+            <Link className="account__item" role="menuitem" to="/actualite">
+              Actualité
+            </Link>
+          </li>
+          <li role="none">
             <Link className="account__item" role="menuitem" to="/mon-espace">
               Mes listes
             </Link>
